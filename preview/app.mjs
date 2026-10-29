@@ -25,10 +25,10 @@ function choose(id,play=true){
   face.setState(id,now,{immediate:paused||$('reduced').checked,restart:true});
   const state=states.get(id);$('current-name').textContent=state.label;$('description').textContent=state.description;
   for(const button of $('states').children)button.setAttribute('aria-pressed',String(button.dataset.id===id));
-  const cue=voicePlan(id);$('cue-description').textContent=cue.text?'�'+cue.text+'� � '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'spoken once':'repeats 3 times'):'This state stays quiet.';
+  const cue=voicePlan(id);$('cue-description').textContent=cue.text?'“'+cue.text+'” · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'spoken once':'repeats 3 times'):'This state stays quiet.';
   if(play)sound.play(id);syncSound();draw();
 }
-function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound ↗';}
+function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound â†—';}
 $('sound').addEventListener('click',async()=>{
   try{if(sound.enabled)sound.mute();else{await sound.enable();sound.play(face.id);}
     $('audio-status').textContent=sound.enabled?'Sound enabled. State buttons play their matching robot voice.':'Muted. Expressions still show every state.';
@@ -45,7 +45,7 @@ $('reduced').addEventListener('change',draw);
 reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
 $('demo').addEventListener('click',async()=>{
   try{await sound.enable();syncSound();paused=false;$('pause').textContent='Pause animation';$('pause').setAttribute('aria-pressed','false');
-    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo running…';choose(definitions.states[0].id);
+    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo runningâ€¦';choose(definitions.states[0].id);
     $('audio-status').textContent='Demo: each state runs for 10 seconds, with its matching sound.';
   }catch(error){$('audio-status').textContent=error.message;}
 });
