@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const sound=new SoundPreview(),face=new Animator('idle',0);
 sound.onError=message=>{$('audio-status').textContent=message;};
 for(const style of voiceStyles){const option=document.createElement('option');option.value=style.id;option.textContent=style.label;$('voice-style').append(option);}
-let now=0,previous=performance.now(),lastDraw=-Infinity,paused=false,demo=false,demoIndex=0,demoAt=0;
+let now=0,previous=performance.now(),paused=false,demo=false,demoIndex=0,demoAt=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
 const states=new Map(definitions.states.map(s=>[s.id,s]));
 for(const s of definitions.states){
@@ -20,7 +20,7 @@ function syncSound(){
 }
 function draw(){
   const f=face.frame(now,{reduced:$('reduced').checked});
-  $('face').innerHTML=svg(f,{muted:!sound.enabled});
+  $('face').innerHTML=svg(f,{muted:!sound.enabled,color:$('eye-color').value});
   $('face').setAttribute('aria-label',states.get(face.id).label+' expression');
 }
 function choose(id,play=true){
@@ -48,6 +48,10 @@ $('pause').addEventListener('click',()=>{
   if(paused)sound.stop();
 });
 $('actual-size').addEventListener('change',event=>document.querySelector('.robot').classList.toggle('actual',event.target.checked));
+$('eye-color').addEventListener('change',()=>{
+  for(const button of $('states').children)button.querySelector('.mini').innerHTML=svg(sample(button.dataset.id,0,{reduced:true}),{color:$('eye-color').value});
+  draw();
+});
 $('reduced').addEventListener('change',draw);
 reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
 $('demo').addEventListener('click',async()=>{
@@ -65,6 +69,7 @@ function tick(time){
     demoAt=now;demoIndex++;
     if(demoIndex>=definitions.states.length){stopDemo();choose('idle',false);}else choose(definitions.states[demoIndex].id);
   }
-  if(time-lastDraw>=50){draw();lastDraw=time;}requestAnimationFrame(tick);
+  if(!document.hidden&&!paused)draw();
+  requestAnimationFrame(tick);
 }
 choose('idle',false);requestAnimationFrame(tick);

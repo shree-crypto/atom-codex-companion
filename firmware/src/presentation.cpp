@@ -6,7 +6,20 @@
 
 void Presentation::begin(bool soundMuted) {
     muted=soundMuted;
+    canvas.setColorDepth(16);
+    canvas.setPsram(false);
+    buffered=canvas.createSprite(128,128)!=nullptr;
+    setColor("blue");
     M5.Speaker.setVolume(120);
+}
+
+bool Presentation::setColor(const char* name) {
+    if (!strcmp(name,"blue")) eyeColor=M5.Display.color565(57,125,204);
+    else if (!strcmp(name,"green")) eyeColor=M5.Display.color565(46,171,121);
+    else if (!strcmp(name,"orange")) eyeColor=M5.Display.color565(237,139,53);
+    else return false;
+    colorName=!strcmp(name,"blue")?"blue":!strcmp(name,"green")?"green":"orange";
+    return true;
 }
 
 void Presentation::setState(State state, bool notify, uint32_t now) {
@@ -48,8 +61,9 @@ void Presentation::sound(uint32_t now) {
 }
 
 void Presentation::render(uint32_t now) {
-    auto& display=M5.Display;
-    const uint16_t bg=display.color565(12,23,29), eye=display.color565(157,244,200);
+    const uint32_t began=micros();
+    lgfx::LGFXBase& display=buffered?static_cast<lgfx::LGFXBase&>(canvas):static_cast<lgfx::LGFXBase&>(M5.Display);
+    const uint16_t bg=display.color565(12,23,29), eye=eyeColor;
     display.startWrite(); display.fillScreen(bg);
     const uint32_t age=now-entered;
     const float motion=age*0.003490659f;
@@ -102,9 +116,18 @@ void Presentation::render(uint32_t now) {
     display.setTextSize(1);
     if (muted) display.drawString("M",115,115);
     display.endWrite();
+    if (buffered) canvas.pushSprite(0,0);
+    ++frames;
+    longestFrame=std::max(longestFrame,uint32_t(micros()-began));
 }
 
 void Presentation::tick(uint32_t now) {
     sound(now);
-    if (uint32_t(now-rendered)>=50) { rendered=now; render(now); }
+    // A stable cadence; never queue catch-up frames after a slow operation.
+    const uint32_t clock=micros(), period=buffered?16667:50000;
+    const uint32_t elapsed=clock-rendered;
+    if (elapsed>=period) {
+        rendered=elapsed>=2*period?clock:rendered+period;
+        render(now);
+    }
 }

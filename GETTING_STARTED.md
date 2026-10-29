@@ -148,3 +148,20 @@ Edit `expressions/definitions.json`, then run `python expressions/generate.py` t
 Python checks: `python -m unittest discover -s tests -v`. Browser logic checks require Node: `node --test tests/face.test.mjs tests/audio.test.mjs`. CAD uses Text-to-CAD/Cadgen 0.8.1 and `cad/stationary.py`; see README for regeneration. Earlier motor headers and tests are retained source studies only; V1 has no motor control.
 
 Recorded voice assets are bundled under `preview/voices/` and in the source download. Choose Cute, Bright/anime-like, Warm, Mature or Spoken announcer. Character styles are short vocal reactions rather than full notification sentences. Credits and CC0 source links are in `preview/voices/CREDITS.md`. The voice ZIP on the site includes the selected recordings and credit files.
+
+## Eye colours and smooth animation
+
+Firmware 2.1 draws into a 128 × 128 offscreen buffer and transfers each complete frame at a target of 60 fps. If buffer allocation fails, it falls back to direct drawing at 20 fps; `STATUS` reports `buffered`, cumulative `frames`, and `max_frame_us` for diagnosis.
+
+The browser preview follows your display refresh rate. Its Eye colour selector compares Deep blue (#397dcc), Forest green (#2eab79), and Orange (#ed8b35), with the existing voice controls.
+
+On the device, send one newline-terminated command over the same USB serial connection:
+
+```text
+COLOR blue
+COLOR green
+COLOR orange
+STATUS
+```
+
+Send only the desired COLOR line. The selected colour persists across restart. Invalid names are rejected without changing the colour. Close the laptop companion before using a serial terminal, and close the terminal before restarting the companion. Colour changes do not acknowledge or approve a Codex request.

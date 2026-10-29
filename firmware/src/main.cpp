@@ -52,6 +52,7 @@ void setup() {
     Serial.begin(115200);
     settings.begin("atom-avatar",false);
     presentation.begin(settings.getBool("muted",false));
+    presentation.setColor(settings.getString("color","blue").c_str());
 }
 
 void loop() {
@@ -64,10 +65,15 @@ void loop() {
                 if (line[used-1]=='\r') --used;
                 line[used]='\0';
                 if (!strcmp(line,"MIC_TEST")) microphoneTest();
+                else if (!strncmp(line,"COLOR ",6)) {
+                    const bool accepted=presentation.setColor(line+6);
+                    if (accepted) settings.putString("color",presentation.color());
+                    Serial.printf("{\"v\":1,\"kind\":\"color\",\"accepted\":%s,\"color\":\"%s\"}\n",accepted?"true":"false",presentation.color());
+                }
                 else if (!strcmp(line,"STATUS")) {
                     State visible=receiver.expired(now)?State::Disconnected:receiver.state();
-                    Serial.printf("{\"v\":1,\"kind\":\"status\",\"state\":\"%s\",\"muted\":%s,\"audio_playing\":%s,\"audio_enabled\":%s}\n",
-                        stateName(visible),presentation.isMuted()?"true":"false",M5.Speaker.isPlaying()?"true":"false",M5.Speaker.isEnabled()?"true":"false");
+                    Serial.printf("{\"v\":1,\"kind\":\"status\",\"state\":\"%s\",\"muted\":%s,\"audio_playing\":%s,\"audio_enabled\":%s,\"buffered\":%s,\"color\":\"%s\",\"frames\":%lu,\"max_frame_us\":%lu}\n",
+                        stateName(visible),presentation.isMuted()?"true":"false",M5.Speaker.isPlaying()?"true":"false",M5.Speaker.isEnabled()?"true":"false",presentation.isBuffered()?"true":"false",presentation.color(),static_cast<unsigned long>(presentation.frameCount()),static_cast<unsigned long>(presentation.maxFrameUs()));
                 }
                 else if (receiver.accept(line,now)) presentation.setState(receiver.state(),receiver.cue(),now);
             }
@@ -81,7 +87,7 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.0-s3r-echo\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.1-s3r-echo\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
                 M5.Speaker.isEnabled()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }

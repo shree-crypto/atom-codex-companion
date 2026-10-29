@@ -74,8 +74,9 @@ function iconShape(icon){
   if(icon===5)return '<path d="M53 106l7-7q3-3 6 0m9 5-7 7q-3 3-6 0m-1-7 6 3M52 96l-3-3m27 20 3 3"/>';
   return '';
 }
-export function svg(frame,{size=128,muted=false}={}){
-  const p=definitions.palette;
+export const eyeColors=Object.freeze({blue:'#397dcc',green:'#2eab79',orange:'#ed8b35'});
+export function svg(frame,{size=128,muted=false,color='blue'}={}){
+  const p={...definitions.palette,eye:eyeColors[color]??eyeColors.blue};
   const eyes=frame.eyes.map(e=>`<path d="${eyePath(e)}"/>`).join('');
   const mouth=`<path d="M57 92q7 8 14 0" opacity="${n(frame.mouth)}" fill="none" stroke="${p.eye}" stroke-width="2.4" stroke-linecap="round"/>`;
   const brows=`<g opacity="${n(frame.brow)}" stroke="${p.eye}" stroke-width="2.5" stroke-linecap="round"><path d="M27 39l25 6m24-1 25-7"/></g>`;

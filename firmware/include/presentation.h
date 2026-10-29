@@ -1,8 +1,14 @@
 #pragma once
 #include <cstdint>
+#include <M5Unified.h>
 #include "protocol.h"
 
 class Presentation {
+    M5Canvas canvas{&M5.Display};
+    bool buffered=false;
+    uint16_t eyeColor=0;
+    const char* colorName="blue";
+    uint32_t frames=0, longestFrame=0;
     State current=State::Disconnected;
     bool muted=false;
     uint32_t entered=0, rendered=0, repeatAt=0;
@@ -16,5 +22,10 @@ public:
     void tick(uint32_t now);
     void mute(bool value);
     void acknowledge();
+    bool setColor(const char* name);
+    const char* color() const { return colorName; }
+    bool isBuffered() const { return buffered; }
+    uint32_t frameCount() const { return frames; }
+    uint32_t maxFrameUs() const { return longestFrame; }
     bool isMuted() const { return muted; }
 };

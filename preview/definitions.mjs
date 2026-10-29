@@ -11,7 +11,7 @@ export default {
   },
   "palette": {
     "background": "#101b22",
-    "eye": "#a3f6d5",
+    "eye": "#397dcc",
     "accent": "#ffcf87"
   },
   "noteMs": 300,

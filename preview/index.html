@@ -7,13 +7,14 @@
   <div class="workspace">
     <section class="stage" aria-label="Live robot preview">
       <div class="robot"><div class="bezel"><div id="face" role="img" aria-label="Ready expression"></div></div><div class="foot"></div></div>
-      <div class="current"><span class="status-dot"></span><span id="current-name">Ready</span><span class="screen-note">128 × 128 · 20 fps</span></div>
+      <div class="current"><span class="status-dot"></span><span id="current-name">Ready</span><span class="screen-note">128 × 128 · smooth motion</span></div>
       <p id="description" class="description">Relaxed eyes, slow blink and a little breathing.</p>
       <div class="stage-actions"><button id="pause" class="quiet" aria-pressed="false">Pause animation</button><label class="check"><input id="actual-size" type="checkbox"> Actual pixels</label></div>
     </section>
     <section class="controls" aria-label="Expression and audio controls">
       <div class="section-heading"><h2>Expressions</h2><span>Pick a state</span></div>
       <div id="states" class="states" role="group" aria-label="Robot states"></div>
+      <label class="voice-picker" for="eye-color">Eye colour <select id="eye-color"><option value="blue">Deep blue</option><option value="green">Forest green</option><option value="orange">Orange</option></select></label>
       <div class="sound-panel">
         <div class="sound-top"><div><h2>Hear its voice</h2><p>Free recorded voices. Pick a personality.</p></div><button id="sound" class="toggle" aria-pressed="false">Sound off</button></div>
         <label class="voice-picker" for="voice-style">Voice style <select id="voice-style" aria-label="Recorded voice style"></select></label>
