@@ -1,48 +1,63 @@
 #include <M5Unified.h>
 #include <cmath>
+#include <algorithm>
 #include "presentation.h"
+#include "voice_assets.h"
 
 void Presentation::begin(bool soundMuted) {
     muted=soundMuted;
-    M5.Speaker.setVolume(48);
+    M5.Speaker.setVolume(120);
 }
 
 void Presentation::setState(State state, bool notify, uint32_t now) {
     if (state!=current || notify) {
+        acknowledge();
         current=state; entered=now;
-    }
-    if (state==State::Disconnected || state==State::Interrupted) {
-        notes=0;
-        M5.Speaker.stop();
-    }
-    if (notify && !muted && (lastCue==0 || uint32_t(now-lastCue)>=2500)) {
-        notes=(state==State::Finished ? 3 : (state==State::NeedsInput || state==State::Error ? 2 : 1));
-        cueStarted=now; lastCue=now; playingNote=255;
+        if (notify && !muted) {
+            repeats=(state==State::NeedsInput || state==State::Error) ? 255 :
+                (state==State::Finished || state==State::Message) ? 3 : state==State::Working ? 1 : 0;
+            repeatAt=now;
+        }
     }
 }
 
 void Presentation::mute(bool value) { muted=value; if (value) acknowledge(); }
 
-void Presentation::acknowledge() { notes=0; playingNote=255; M5.Speaker.stop(); }
+void Presentation::acknowledge() { repeats=0; waitingForVoice=false; M5.Speaker.stop(); }
 
 void Presentation::sound(uint32_t now) {
-    if (!M5.Speaker.isEnabled()) return;
-    if (!notes || muted) return;
-    uint32_t age=now-cueStarted;
-    unsigned note=age/180;
-    if (note>=notes) { notes=0; M5.Speaker.stop(); return; }
-    unsigned frequency=(current==State::Error ? 440-note*80 : 880+note*220);
-    if (playingNote!=note) { playingNote=note; M5.Speaker.tone(frequency,100); }
+    if (!M5.Speaker.isEnabled() || !repeats || muted || M5.Speaker.isPlaying()) return;
+    if (waitingForVoice) {
+        waitingForVoice=false;
+        repeatAt=now+((current==State::NeedsInput || current==State::Error)?3000:1200);
+        return;
+    }
+    if (int32_t(now-repeatAt)<0) return;
+    const uint8_t* data=nullptr; size_t size=0;
+    switch (current) {
+        case State::Working: data=VOICE_WORKING; size=sizeof(VOICE_WORKING); break;
+        case State::NeedsInput: data=VOICE_NEEDS_INPUT; size=sizeof(VOICE_NEEDS_INPUT); break;
+        case State::Message: data=VOICE_MESSAGE; size=sizeof(VOICE_MESSAGE); break;
+        case State::Finished: data=VOICE_FINISHED; size=sizeof(VOICE_FINISHED); break;
+        case State::Error: data=VOICE_ERROR; size=sizeof(VOICE_ERROR); break;
+        default: repeats=0; return;
+    }
+    if (!M5.Speaker.playWav(data,size,1,0,true)) { repeats=0; return; }
+    if (repeats<255) --repeats;
+    waitingForVoice=true;
 }
 
 void Presentation::render(uint32_t now) {
     auto& display=M5.Display;
     const uint16_t bg=display.color565(12,23,29), eye=display.color565(157,244,200);
     display.startWrite(); display.fillScreen(bg);
-    uint32_t phase=now%5200;
-    bool blink=(phase<130) && current!=State::NeedsInput;
-    int gaze=current==State::Working ? int(4*std::sin(now*0.0009f)) : current==State::Message ? 6 : 0;
-    int height=current==State::Working ? 27 : current==State::NeedsInput ? 43 : 36;
+    const uint32_t age=now-entered;
+    const float motion=age*0.003490659f;
+    const uint16_t accent=display.color565(255,207,135);
+    uint32_t phase=age%5200;
+    bool blink=(phase>5000 && phase<5130) && current!=State::NeedsInput && current!=State::Working;
+    int gaze=current==State::Working ? int(9*std::sin(motion)) : current==State::Message ? int(3*std::sin(motion)) : 0;
+    int height=current==State::Working ? 18 : current==State::NeedsInput ? 42+int(2*std::sin(motion)) : 35;
     if (blink || current==State::Interrupted) height=7;
     if (current==State::Disconnected) height=5;
     if (current==State::Finished && !blink) {
@@ -52,16 +67,34 @@ void Presentation::render(uint32_t now) {
             display.fillCircle((x?87:40)+dx,y,3,eye);
         }
     } else {
-        for (int x=0; x<2; ++x)
-            display.fillRoundRect((x?77:29)+gaze,64-height/2,22,height,std::min(10,height/2),eye);
+        for (int x=0; x<2; ++x) {
+            int y=64+(current==State::Working ? int(3*std::cos(motion+x*3.14159f)) : 0);
+            int h=height+(current==State::Message && !blink ? int((x?-7:3)*std::cos(motion)) : 0);
+            h=std::max(3,h);
+            display.fillRoundRect((x?77:29)+gaze,y-h/2,22,h,std::min(10,h/2),eye);
+        }
     }
     if (current==State::Error) {
         display.drawLine(27,38,53,44,eye); display.drawLine(77,44,103,36,eye);
     }
     display.setTextColor(eye,bg); display.setTextSize(2);
-    if (current==State::NeedsInput) display.drawString("?",59,12);
+    if (current==State::NeedsInput) {
+        int d=2+int(2*std::sin(motion));
+        display.fillRoundRect(62,14-d,4,13,2,accent); display.fillCircle(64,33,2,accent);
+        display.drawLine(44-d,24,39-d,20,accent); display.drawLine(84+d,24,89+d,20,accent);
+    }
     if (current==State::Error) display.drawString("!",59,95);
-    if (current==State::Message) display.fillCircle(28,27,4,eye);
+    if (current==State::Message) {
+        int y=15-int(3*std::abs(std::sin(motion)));
+        display.drawRoundRect(50,y,28,19,4,accent);
+        display.drawLine(51,y+2,64,y+12,accent); display.drawLine(64,y+12,77,y+2,accent);
+        display.fillCircle(80,y-1,4,accent);
+    }
+    if (current==State::Working) for(int i=0;i<5;++i)
+        display.fillCircle(44+i*10,101,2+int(1.1f*std::sin(motion-i*.8f)),accent);
+    if (current==State::Finished || current==State::Message || current==State::NeedsInput) {
+        display.drawLine(58,93,64,96,eye); display.drawLine(64,96,70,93,eye);
+    }
     if (current==State::Disconnected) {
         display.drawLine(53,101,61,93,eye); display.drawLine(67,101,75,93,eye);
         display.drawLine(60,99,68,95,eye);

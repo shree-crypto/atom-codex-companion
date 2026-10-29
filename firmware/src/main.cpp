@@ -1,5 +1,7 @@
 #include <M5Unified.h>
 #include <Preferences.h>
+#include <algorithm>
+#include <cmath>
 #include "presentation.h"
 
 Receiver receiver;
@@ -10,10 +12,42 @@ size_t used=0;
 bool dropping=false, longPress=false;
 uint32_t pressedAt=0, readyAt=0;
 
+// Local, explicitly requested diagnostic: keep raw microphone samples in RAM only.
+void microphoneTest() {
+    presentation.acknowledge();
+    M5.Speaker.end();
+    static int16_t samples[1600];
+    memset(samples,0,sizeof(samples));
+    bool started=M5.Mic.begin();
+    bool recorded=started && M5.Mic.record(samples,1600,16000);
+    uint32_t began=millis();
+    while (recorded && M5.Mic.isRecording() && uint32_t(millis()-began)<1000) delay(1);
+    recorded=recorded && !M5.Mic.isRecording();
+    M5.Mic.end();
+    double mean=0, energy=0; int peak=0;
+    for (int value:samples) mean+=value;
+    mean/=1600;
+    for (int value:samples) {
+        const double centered=value-mean;
+        energy+=centered*centered;
+        peak=std::max(peak,int(std::abs(centered)));
+    }
+    memset(samples,0,sizeof(samples));
+    bool speaker=M5.Speaker.begin();
+    Serial.printf("{\"v\":1,\"kind\":\"mic_test\",\"recorded\":%s,\"rms\":%.2f,\"peak\":%d,\"speaker_restored\":%s}\n",
+        recorded?"true":"false",std::sqrt(energy/1600),peak,speaker?"true":"false");
+}
+
 void setup() {
     auto config=M5.config();
     config.clear_display=true;
+    config.external_speaker.atomic_echo=true;
+    config.internal_mic=true;
+    config.internal_imu=false;
+    config.internal_rtc=false;
     M5.begin(config);
+    M5.Mic.end(); // Capture is enabled only by the explicit MIC_TEST diagnostic.
+    M5.Speaker.begin();
     M5.Display.setBrightness(100);
     Serial.begin(115200);
     settings.begin("atom-avatar",false);
@@ -27,8 +61,15 @@ void loop() {
         int value=Serial.read();
         if (value=='\n') {
             if (!dropping && used) {
+                if (line[used-1]=='\r') --used;
                 line[used]='\0';
-                if (receiver.accept(line,now)) presentation.setState(receiver.state(),receiver.cue(),now);
+                if (!strcmp(line,"MIC_TEST")) microphoneTest();
+                else if (!strcmp(line,"STATUS")) {
+                    State visible=receiver.expired(now)?State::Disconnected:receiver.state();
+                    Serial.printf("{\"v\":1,\"kind\":\"status\",\"state\":\"%s\",\"muted\":%s,\"audio_playing\":%s,\"audio_enabled\":%s}\n",
+                        stateName(visible),presentation.isMuted()?"true":"false",M5.Speaker.isPlaying()?"true":"false",M5.Speaker.isEnabled()?"true":"false");
+                }
+                else if (receiver.accept(line,now)) presentation.setState(receiver.state(),receiver.cue(),now);
             }
             used=0; dropping=false;
         } else if (!dropping) {
@@ -40,7 +81,8 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"audio\":%s}\n",M5.Speaker.isEnabled()?"true":"false");
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.0-s3r-echo\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+                M5.Speaker.isEnabled()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }
     if (M5.BtnA.wasPressed()) { pressedAt=now; longPress=false; }

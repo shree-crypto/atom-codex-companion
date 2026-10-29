@@ -65,11 +65,11 @@ def main():
     shutil.copytree(ROOT / 'preview/voices', DIST / 'voices', dirs_exist_ok=True)
     patterns = ['README.md', 'GETTING_STARTED.md', 'requirements*.txt',
                 'companion/*.py', 'hooks/*.py', 'hooks/config.example.json',
-                'firmware/platformio.ini', 'firmware/src/*.cpp', 'firmware/include/*.h',
+                'assets/*.png', 'firmware/*.md', 'firmware/platformio.ini', 'firmware/src/*.cpp', 'firmware/include/*.h',
                 'firmware/test/test_limits/*.cpp', 'expressions/*.py', 'expressions/definitions.json',
                 'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'preview/voices/*.md', 'preview/voices/*.txt', 'preview/voices/*.json',
                 'preview/voices/*/*.wav', 'preview/voices/*/*.ogg', 'tests/*.py', 'tests/*.mjs',
-                'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md',
+                'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md', 'checks/HARDWARE_S3R_ECHO.md', 'checks/hardware-s3r-echo.json',
                 'cad/*.py', 'cad/dimensions.json']
     sources = sorted({p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file()})
     assert sources and (ROOT / 'GETTING_STARTED.md') in sources
@@ -84,7 +84,7 @@ def main():
     archive(OUT / 'classic-enclosure-models.zip', models + [(ROOT / 'GETTING_STARTED.md', 'GETTING_STARTED.md')])
     for name in ['body', 'bezel', 'keeper', 'fit_coupons']:
         shutil.copyfile(ROOT / 'cad' / 'STL' / (name + '.stl'), OUT / (name + '.stl'))
-    shutil.copyfile(ROOT / 'outputs' / 'atom-v1-classic-firmware.bin', OUT / 'atom-v1-classic-firmware.bin')
+    shutil.copyfile(ROOT / 'outputs' / 'atom-s3r-echo-firmware.bin', OUT / 'atom-s3r-echo-firmware.bin')
     shutil.copyfile(ROOT / 'GETTING_STARTED.md', OUT / 'GETTING_STARTED.md')
     (DIST / 'setup.html').write_text(guide_html((ROOT / 'GETTING_STARTED.md').read_text(encoding='utf-8')), encoding='utf-8')
     manifest = [{'file': p.name, 'bytes': p.stat().st_size, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()}

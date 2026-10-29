@@ -1,0 +1,76 @@
+{
+  "checked_on": "2026-10-30",
+  "target": "AtomS3R C126 + Atomic Echo Base A149",
+  "fqbn": "m5stack:esp32:m5stack_atoms3r",
+  "arduino_cli": "1.5.1",
+  "board_package": "m5stack:esp32@3.3.10",
+  "libraries": {
+    "M5Unified": "0.2.28",
+    "M5GFX": "0.2.35",
+    "ArduinoJson": "6.21.5"
+  },
+  "firmware_file": "atom-s3r-echo-firmware.bin",
+  "firmware_bytes": 692304,
+  "firmware_sha256": "bfad074bdde0f3def230a42bcdd0966bf8bb3ca98e25f8d32cce65c5bc956669",
+  "upload_hash_verified": true,
+  "ready": {
+    "v": 1,
+    "device": "atom-companion",
+    "kind": "ready",
+    "firmware": "2.0-s3r-echo",
+    "audio": true,
+    "psram_bytes": 8388608,
+    "board_id": 18
+  },
+  "microphone": {
+    "recorded": true,
+    "signal_nonzero": true,
+    "speaker_restored": true
+  },
+  "states": [
+    {
+      "v": 1,
+      "kind": "status",
+      "state": "idle",
+      "muted": false,
+      "audio_playing": false,
+      "audio_enabled": true
+    },
+    {
+      "v": 1,
+      "kind": "status",
+      "state": "working",
+      "muted": false,
+      "audio_playing": true,
+      "audio_enabled": true
+    },
+    {
+      "v": 1,
+      "kind": "status",
+      "state": "needs_input",
+      "muted": false,
+      "audio_playing": true,
+      "audio_enabled": true
+    },
+    {
+      "v": 1,
+      "kind": "status",
+      "state": "message",
+      "muted": false,
+      "audio_playing": true,
+      "audio_enabled": true
+    },
+    {
+      "v": 1,
+      "kind": "status",
+      "state": "finished",
+      "muted": false,
+      "audio_playing": true,
+      "audio_enabled": true
+    }
+  ],
+  "limits": [
+    "Display pixels, audible sound and physical button feel require user confirmation.",
+    "Microphone samples were discarded; no speech was stored or transmitted."
+  ]
+}

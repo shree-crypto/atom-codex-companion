@@ -6,13 +6,15 @@ V1 is stationary: orange Classic bezel, black body, pressable colour face and so
 
 - `atom-companion-source.zip`: editable firmware, laptop companion, hook example, expression preview, CAD source, tests and this guide.
 - `classic-enclosure-models.zip`: body, Classic bezel, rear keeper and fit coupons in STL; main parts also in STEP and 3MF.
-- `atom-v1-classic-firmware.bin`: previously compiled application image, provided for reference. It is not a complete flash bundle; use the source build/upload route below, which supplies the bootloader and partition images too.
+- `atom-s3r-echo-firmware.bin`: AtomS3R + Echo Base application image, provided for reference. It is not a complete flash bundle; use the source build/upload route below, which supplies the bootloader and partition images too.
 
-The website has the latest animated faces and five recorded voice styles. The device firmware is an earlier baseline with simpler faces and tones. Browser playback is separate from embedded audio: the new recorded voices and revised animations have not been ported to, flashed onto or tested on the Atom. The files are a prototype kit, with the exact device variant and physical print fit still to be confirmed.
+The website offers five recorded voice styles. The S3R + Echo Base firmware embeds the default Cute recordings and updated Working, Needs you and New message visuals. Hardware build/flash results are recorded separately; physical print fit and subjective sound/display quality require confirmation. Browser voice selection does not remotely configure the device.
 
 ## 2. Check the hardware
 
-Use the label on the board to identify its exact model. The supplied development profile targets AtomS3 C123, using an ESP32-S3 profile with 8 MB flash. Confirm this before uploading; another Atom variant needs its matching profile. Have a USB data cable, the board and a laptop ready. The firmware uses M5Unified's display, button and speaker drivers; confirm audio on your actual board during testing.
+The current target is **AtomS3R C126 + Atomic Echo Base A149** (called Atomic Voice Base in current M5Stack documentation). Attach the base underneath the S3R. It supplies the speaker and microphone. The S3R itself has a 128 x 128 colour screen, pressable face, 8 MB flash and 8 MB PSRAM. Use a USB data cable from the S3R to the laptop.
+
+The old AtomS3 C123 profile and old compiled application image are legacy artifacts. Use the S3R Arduino CLI route below for this hardware. Do not flash an older board-specific application BIN at a guessed address.
 
 ## 3. Unzip and install Python tools
 
@@ -22,7 +24,7 @@ Windows PowerShell:
 
 ```powershell
 py -3.13 -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m companion.main --init-config
 ```
 
@@ -30,7 +32,7 @@ macOS Terminal:
 
 ```sh
 python3.13 -m venv .venv
-.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m companion.main --init-config
 ```
 
@@ -54,23 +56,32 @@ macOS:
 
 Use the actual port shown, such as `COM5` or `/dev/cu.usbmodem…`. The examples below use placeholders; substitute your port. Close serial monitors before uploading or running the companion.
 
-## 5. Build and upload firmware
+## 5. Build and upload firmware with Arduino CLI
 
-Windows:
+Install Arduino CLI. On Windows: `winget install --id ArduinoSA.CLI --exact --source winget`. Open a new terminal after installation if the command is not on PATH. For macOS, follow the official Arduino CLI installation guide linked in `firmware/ARDUINO.md`.
 
-```powershell
-.venv\Scripts\python.exe -m platformio run -d firmware -e atoms3 -j 2
-.venv\Scripts\python.exe -m platformio run -d firmware -e atoms3 -t upload --upload-port COM5
-```
-
-macOS:
+Install the official M5Stack board package and libraries:
 
 ```sh
-.venv/bin/python -m platformio run -d firmware -e atoms3 -j 2
-.venv/bin/python -m platformio run -d firmware -e atoms3 -t upload --upload-port /dev/cu.YOUR_PORT
+arduino-cli core update-index --additional-urls https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
+arduino-cli core install m5stack:esp32@3.3.10 --additional-urls https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
+arduino-cli lib install M5Unified@0.2.28 M5GFX@0.2.35 ArduinoJson@6.21.5
 ```
 
-The first build downloads the pinned toolchain and libraries. If upload cannot connect, check the cable, selected port and board-specific download-mode instructions. This workspace has compiled the baseline firmware successfully; it has not physically flashed your device. Do not flash the standalone application BIN at a guessed address.
+From the project root, build first, then upload to the actual port:
+
+```sh
+python checks/arduino_build.py
+python checks/arduino_build.py --upload --port COM5
+```
+
+Use the virtual environment Python from step 3 if `python` resolves to another interpreter. On macOS replace COM5 with the actual `/dev/cu.*` port. The helper uses `m5stack:esp32:m5stack_atoms3r` and stages the canonical firmware source into an ignored Arduino sketch. Pass `--cli PATH` if the CLI is not on PATH.
+
+If automatic reset fails, hold the S3R reset button for about two seconds until its green LED lights, release, and retry using the listed download-mode port. Do not erase the entire flash or upload a standalone application BIN at a guessed address.
+
+Before starting the companion, use the virtual environment Python from step 3 to run `checks/device_check.py --port COM5` (substitute your actual port). This briefly cycles the faces and voice clips, checks PSRAM and the speaker driver, and takes a 100 ms local microphone sample. It reports levels and discards the raw audio. Close serial monitors first. This is a manual hardware check; automatic Codex events are configured in step 8.
+
+Detailed device behavior and microphone diagnostics: `firmware/ARDUINO.md`. The selected Cute character recordings are embedded in the new S3R firmware; browser style selection does not remotely change the device voice. Microphone use is an explicit local diagnostic, not an always-on cloud assistant.
 
 ## 6. Start the laptop companion
 
@@ -114,7 +125,7 @@ With the companion running, submit a prompt: the robot should show Working. A pe
 
 Unzip the model pack. Print `STL/fit_coupons.stl` first. Check the board and your printer's fit before committing to the full enclosure. Then print `STL/body.stl`, `STL/bezel.stl` and `STL/keeper.stl`. Start with a 0.4 mm nozzle and 0.2 mm layers; orient flat surfaces on the bed and inspect overhangs in your slicer. Use your printer/material profile for temperatures, cooling, supports and shrinkage.
 
-PLA is suitable for an initial fit prototype; ABS needs its own fit/shrinkage check. Black body + keeper and orange bezel use two separately printed colours. Nominal assembled size is 48 × 38 × 44 mm. The snap fits, speaker grille, USB opening and keeper have not been physically validated on your exact board.
+PLA is suitable for an initial fit prototype; ABS needs its own fit/shrinkage check. Black body + keeper and orange bezel use two separately printed colours. Nominal assembled size is 48 × 42 × 44 mm. The snap fits, speaker grille, USB opening and keeper have not been physically validated on your exact board.
 
 ## 10. Assemble and verify
 

@@ -5,9 +5,9 @@
 class Presentation {
     State current=State::Disconnected;
     bool muted=false;
-    uint32_t entered=0, rendered=0, cueStarted=0, lastCue=0;
-    uint8_t notes=0;
-    uint8_t playingNote=255;
+    uint32_t entered=0, rendered=0, repeatAt=0;
+    uint8_t repeats=0;
+    bool waitingForVoice=false;
     void render(uint32_t now);
     void sound(uint32_t now);
 public:

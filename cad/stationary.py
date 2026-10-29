@@ -1,6 +1,14 @@
-"""V1 stationary snapfit enclosure. No motors, servo cavities, pins or screw joints."""
+"""Stationary AtomS3R + Atomic Echo/Voice Base snapfit enclosure prototype."""
 import build123d as bd
 from cadgen import model
+
+# Manufacturer envelopes: AtomS3R C126 24x24x12.9, A149 base 24x24x14.14 mm.
+# Conservatively add both depths; measure the assembled connector overlap before printing.
+STACK_DEPTH=12.9+14.14
+EXTRA_DEPTH=STACK_DEPTH-13.0
+# The old shell already had rear air space; four extra mm clears the deeper keeper.
+SHELL_EXTENSION=4.0
+FRONT_CLEARANCE=1.8
 
 
 def rounded(w,d,h,r):
@@ -17,35 +25,38 @@ def named(part,name,colour):
 
 @model
 def body():
-    shell=bd.Pos(0,1,25)*front(40,38,28,6)
-    shell-=bd.Pos(0,-2.2,25)*front(35.2,33.2,29.6,3.6)
-    foot=bd.Pos(0,1,3)*rounded(48,38,6,8)
+    shell=bd.Pos(0,1+SHELL_EXTENSION/2,25)*front(40,38,28+SHELL_EXTENSION,6)
+    shell-=bd.Pos(0,-2.2+SHELL_EXTENSION/2,25)*front(35.2,33.2,29.6+SHELL_EXTENSION,3.6)
+    foot=bd.Pos(0,1+SHELL_EXTENSION/2,3)*rounded(48,38+SHELL_EXTENSION,6,8)
     shell+=foot
     for side in (-1,1):
         for z in (16,34):
             shell-=bd.Pos(side*19,0.3,z)*bd.Box(6,4.4,6)
     shell-=bd.Pos(0,-6.5,42)*bd.Box(14,12,12)
-    # Speaker grille leaves room for the user's integrated speaker; exact opening
-    # alignment remains a fit check for the board's actual variant.
+    # Rear grille and side vents give the Echo Base an open acoustic path.
+    # Exact speaker/microphone port alignment still requires a physical fit check.
     for x in (-6,-3,0,3,6):
-        shell-=bd.Pos(x,14,25)*bd.Box(1.2,6,10)
+        shell-=bd.Pos(x,14+SHELL_EXTENSION,25)*bd.Box(1.2,6,10)
+    for side in (-1,1):
+        shell-=bd.Pos(side*19,7,26)*bd.Box(6,8,4)
     assert shell.is_valid and len(shell.solids())==1
     return named(shell,'body','#252b30')
 
 
 def bezel_shape(width=40,height=38,radius=6):
     part=bd.Pos(0,-14.5,25)*front(width,height,3,radius)
-    part-=bd.Pos(0,-14.5,26)*bd.Box(24.6,8,24.6)
+    # Front lip catches the fixed 24 mm housing; the screen remains accessible.
+    part-=bd.Pos(0,-14.5,26)*bd.Box(22.4,8,22.4)
     for side in (-1,1):
         for z in (16,34):
             part+=bd.Pos(side*16.7,-5.9,z)*bd.Box(1.2,14.6,4)
             part+=bd.Pos(side*17.7,-0.1,z)*bd.Box(0.8,1.5,4)
-    cage=bd.Pos(0,-8,26)*front(28.2,28.2,13.6,2)
-    cage-=bd.Pos(0,-8,26)*bd.Box(24.6,18,24.6)
+    cage=bd.Pos(0,-8+(EXTRA_DEPTH+FRONT_CLEARANCE)/2,26)*front(28.2,28.2,13.6+EXTRA_DEPTH+FRONT_CLEARANCE,2)
+    cage-=bd.Pos(0,-8+(EXTRA_DEPTH+FRONT_CLEARANCE)/2,26)*bd.Box(24.6,18+EXTRA_DEPTH+FRONT_CLEARANCE,24.6)
     part+=cage
     part-=bd.Pos(0,-6.5,39.5)*bd.Box(14,12,5)
     for side in (-1,1):
-        part-=bd.Pos(side*12.8,-1.6,26)*bd.Box(1.4,3.4,6.4)
+        part-=bd.Pos(side*12.8,-1.6+EXTRA_DEPTH+FRONT_CLEARANCE,21)*bd.Box(1.4,3.4,16.4)
     return named(part,'bezel','#e87a29')
 
 
@@ -66,9 +77,10 @@ def bezel_trim():
 
 @model
 def keeper():
-    part=bd.Pos(0,-0.4,26)*bd.Box(25,1.5,4)
+    # Keep the centre of the base clear for its speaker instead of crossing it.
+    part=bd.Pos(0,-0.4+EXTRA_DEPTH+FRONT_CLEARANCE,16)*bd.Box(25,1.5,4)
     for side in (-1,1):
-        part+=bd.Pos(side*12.8,-1.3,26)*bd.Box(1,3,6)
+        part+=bd.Pos(side*12.8,-1.3+EXTRA_DEPTH+FRONT_CLEARANCE,21)*bd.Box(1,3,14)
     return named(part,'keeper','#252b30')
 
 
@@ -76,11 +88,11 @@ PRINT_PARTS=(body,bezel,keeper)
 
 
 def hardware():
-    atom=bd.Pos(0,-8,26)*bd.Box(24,13,24)
-    screen=bd.Pos(0,-14.65,26)*bd.Box(21.8,0.2,21.8)
+    atom=bd.Pos(0,-8+EXTRA_DEPTH/2+FRONT_CLEARANCE,26)*bd.Box(24,STACK_DEPTH,24)
+    screen=bd.Pos(0,-14.65+FRONT_CLEARANCE,26)*bd.Box(21.8,0.2,21.8)
     parts=[named(atom,'Atom_ENVELOPE_NOT_PRINTED','#30383d'),named(screen,'screen_NOT_PRINTED','#101b22')]
     for i,x in enumerate((-4.5,4.5)):
-        parts.append(named(bd.Pos(x,-14.8,26)*front(4,8,0.15,1.9),'eye_NOT_PRINTED_'+str(i),'#a3f6d5'))
+        parts.append(named(bd.Pos(x,-14.8+FRONT_CLEARANCE,26)*front(4,8,0.15,1.9),'eye_NOT_PRINTED_'+str(i),'#a3f6d5'))
     return parts
 
 

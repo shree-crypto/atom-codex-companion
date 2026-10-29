@@ -1,4 +1,6 @@
-# V1 acceptance record — 2026-10-29
+# Historical V1 acceptance record — 2026-10-29
+
+For the current AtomS3R + Atomic Echo Base build, upload and microphone/speaker checks, see [HARDWARE_S3R_ECHO.md](HARDWARE_S3R_ECHO.md). The record below describes the earlier C123 development baseline.
 
 Selected: **A Classic, orange bezel + black body**. V1 stationary, no motors. Device-speaker cues use M5Unified's M5.Speaker as requested.
 

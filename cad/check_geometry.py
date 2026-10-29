@@ -40,7 +40,7 @@ def main():
     assert fit_coupons().shape.is_valid
     result['neutral_print_part_collisions'] = collisions
     result['limitations'] = ['Nominal component sizes; physical fit not verified',
-                            'Cable harness and fasteners require physical checks',
+                            'USB clearance, acoustic openings and snap forces require physical checks',
                             'V1 is stationary; no motors or motion mechanism']
     out = Path(__file__).parent / 'review' / 'geometry.json'
     out.parent.mkdir(exist_ok=True)
