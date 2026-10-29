@@ -62,16 +62,19 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for name in ['index.html', 'style.css', 'app.mjs', 'audio.mjs', 'face.mjs', 'definitions.mjs']:
         shutil.copyfile(ROOT / 'preview' / name, DIST / name)
+    shutil.copytree(ROOT / 'preview/voices', DIST / 'voices', dirs_exist_ok=True)
     patterns = ['README.md', 'GETTING_STARTED.md', 'requirements*.txt',
                 'companion/*.py', 'hooks/*.py', 'hooks/config.example.json',
                 'firmware/platformio.ini', 'firmware/src/*.cpp', 'firmware/include/*.h',
                 'firmware/test/test_limits/*.cpp', 'expressions/*.py', 'expressions/definitions.json',
-                'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'tests/*.py', 'tests/*.mjs',
+                'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'preview/voices/*.md', 'preview/voices/*.txt', 'preview/voices/*.json',
+                'preview/voices/*/*.wav', 'preview/voices/*/*.ogg', 'tests/*.py', 'tests/*.mjs',
                 'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md',
                 'cad/*.py', 'cad/dimensions.json']
     sources = sorted({p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file()})
     assert sources and (ROOT / 'GETTING_STARTED.md') in sources
     archive(OUT / 'atom-companion-source.zip', [(p, p.relative_to(ROOT).as_posix()) for p in sources], 'robot-companion/')
+    archive(OUT / 'recorded-voice-clips.zip', [(p, p.relative_to(ROOT / 'preview/voices').as_posix()) for p in (ROOT / 'preview/voices').rglob('*') if p.is_file()])
     models = []
     for kind in ['STL', 'STEP', '3MF']:
         for name in ['body', 'bezel', 'keeper'] + (['fit_coupons'] if kind == 'STL' else []):

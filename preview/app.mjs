@@ -1,7 +1,9 @@
 import {Animator,sample,svg,definitions} from './face.mjs';
-import {SoundPreview,voicePlan} from './audio.mjs';
+import {SoundPreview,voicePlan,voiceStyles} from './audio.mjs';
 const $=id=>document.getElementById(id);
 const sound=new SoundPreview(),face=new Animator('idle',0);
+sound.onError=message=>{$('audio-status').textContent=message;};
+for(const style of voiceStyles){const option=document.createElement('option');option.value=style.id;option.textContent=style.label;$('voice-style').append(option);}
 let now=0,previous=performance.now(),lastDraw=-Infinity,paused=false,demo=false,demoIndex=0,demoAt=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
 const states=new Map(definitions.states.map(s=>[s.id,s]));
@@ -25,17 +27,22 @@ function choose(id,play=true){
   face.setState(id,now,{immediate:paused||$('reduced').checked,restart:true});
   const state=states.get(id);$('current-name').textContent=state.label;$('description').textContent=state.description;
   for(const button of $('states').children)button.setAttribute('aria-pressed',String(button.dataset.id===id));
-  const cue=voicePlan(id);$('cue-description').textContent=cue.text?'“'+cue.text+'” · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'spoken once':'repeats 3 times'):'This state stays quiet.';
+  const cue=voicePlan(id,sound.style);$('cue-description').textContent=cue.text?cue.text+' · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'plays once':'repeats 3 times'):'This state stays quiet.';
   if(play)sound.play(id);syncSound();draw();
 }
-function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound â†—';}
+function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound';}
 $('sound').addEventListener('click',async()=>{
   try{if(sound.enabled)sound.mute();else{await sound.enable();sound.play(face.id);}
-    $('audio-status').textContent=sound.enabled?'Sound enabled. State buttons play their matching robot voice.':'Muted. Expressions still show every state.';
+    $('audio-status').textContent=sound.enabled?'Sound enabled. State buttons play their matching recording.':'Muted. Expressions still show every state.';
   }catch(error){$('audio-status').textContent=error.message;}syncSound();draw();
 });
 $('volume').addEventListener('input',event=>{sound.volume=Number(event.target.value)/100;$('volume-value').value=event.target.value+'%';});
 $('replay').addEventListener('click',()=>sound.play(face.id));
+$('voice-style').addEventListener('change',event=>{sound.setStyle(event.target.value);choose(face.id,sound.enabled);});
+$('audition').addEventListener('click',async()=>{
+  try{await sound.enable();stopDemo();choose('needs_input',false);sound.play('needs_input',{once:true});syncSound();$('audio-status').textContent='One attention sample. Choose another voice to compare; Sound off stops playback.';}
+  catch(error){$('audio-status').textContent=error.message;}
+});
 $('pause').addEventListener('click',()=>{
   paused=!paused;$('pause').setAttribute('aria-pressed',String(paused));$('pause').textContent=paused?'Resume animation':'Pause animation';
   if(paused)sound.stop();
@@ -45,7 +52,7 @@ $('reduced').addEventListener('change',draw);
 reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
 $('demo').addEventListener('click',async()=>{
   try{await sound.enable();syncSound();paused=false;$('pause').textContent='Pause animation';$('pause').setAttribute('aria-pressed','false');
-    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo runningâ€¦';choose(definitions.states[0].id);
+    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo running...';choose(definitions.states[0].id);
     $('audio-status').textContent='Demo: each state runs for 10 seconds, with its matching sound.';
   }catch(error){$('audio-status').textContent=error.message;}
 });

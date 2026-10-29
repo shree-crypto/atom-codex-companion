@@ -1,0 +1,160 @@
+[
+  {
+    "file": "cute/working.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 1/jump1.wav"
+    ],
+    "duration": 0.302
+  },
+  {
+    "file": "cute/needs_input.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 1/jump2.wav",
+      "Type 1/jump1.wav"
+    ],
+    "duration": 0.766
+  },
+  {
+    "file": "cute/message.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 1/jump3.wav"
+    ],
+    "duration": 0.253
+  },
+  {
+    "file": "cute/finished.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 1/healed1.wav"
+    ],
+    "duration": 0.61
+  },
+  {
+    "file": "cute/error.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 1/damaged1.wav"
+    ],
+    "duration": 0.272
+  },
+  {
+    "file": "warm/working.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 2/jump1.wav"
+    ],
+    "duration": 0.228
+  },
+  {
+    "file": "warm/needs_input.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 2/jump2.wav",
+      "Type 2/jump1.wav"
+    ],
+    "duration": 0.658
+  },
+  {
+    "file": "warm/message.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 2/jump3.wav"
+    ],
+    "duration": 0.23
+  },
+  {
+    "file": "warm/finished.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 2/healed1.wav"
+    ],
+    "duration": 0.471
+  },
+  {
+    "file": "warm/error.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 2/damaged1.wav"
+    ],
+    "duration": 0.511
+  },
+  {
+    "file": "mature/working.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 3/jump1.wav"
+    ],
+    "duration": 0.237
+  },
+  {
+    "file": "mature/needs_input.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 3/jump2.wav",
+      "Type 3/jump1.wav"
+    ],
+    "duration": 0.709
+  },
+  {
+    "file": "mature/message.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 3/jump3.wav"
+    ],
+    "duration": 0.324
+  },
+  {
+    "file": "mature/finished.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 3/healed1.wav"
+    ],
+    "duration": 0.611
+  },
+  {
+    "file": "mature/error.wav",
+    "source": "cicifyre / Female RPG Voice Starter Pack",
+    "originals": [
+      "Type 3/damaged1.wav"
+    ],
+    "duration": 0.304
+  },
+  {
+    "file": "spoken/working.ogg",
+    "source": "Kenney / Voiceover Pack",
+    "originals": [
+      "Female/go.ogg"
+    ]
+  },
+  {
+    "file": "spoken/needs_input.ogg",
+    "source": "Kenney / Voiceover Pack",
+    "originals": [
+      "Female/ready.ogg"
+    ]
+  },
+  {
+    "file": "spoken/message.ogg",
+    "source": "Kenney / Voiceover Pack",
+    "originals": [
+      "Female/ready.ogg"
+    ]
+  },
+  {
+    "file": "spoken/finished.ogg",
+    "source": "Kenney / Voiceover Pack",
+    "originals": [
+      "Female/mission_completed.ogg"
+    ]
+  },
+  {
+    "file": "spoken/error.ogg",
+    "source": "Kenney / Voiceover Pack",
+    "originals": [
+      "Female/war_hold.ogg"
+    ]
+  }
+]

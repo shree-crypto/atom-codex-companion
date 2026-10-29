@@ -30,13 +30,12 @@ export default {
       "mouth": 0,
       "brow": 0,
       "icon": 0,
-      "cue": [],
-      "voice": ""
+      "cue": []
     },
     {
       "id": "working",
       "label": "Working",
-      "description": "Always on the move: scanning eyes and a looping activity trail. A cheerful voice says, I am on it.",
+      "description": "Continuously scanning eyes and a looping activity trail. One recorded vocal reaction on entry.",
       "h": 18,
       "w": 23,
       "bend": 0,
@@ -46,13 +45,12 @@ export default {
       "mouth": 0,
       "brow": 0,
       "icon": 0,
-      "cue": [],
-      "voice": "I'm on it!"
+      "cue": []
     },
     {
       "id": "needs_input",
       "label": "Needs you",
-      "description": "Wide eyes, a pulsing prompt and a friendly voice calling for your input.",
+      "description": "Wide eyes and a pulsing prompt. A recorded attention call repeats until state change or mute.",
       "h": 42,
       "w": 24,
       "bend": 0,
@@ -65,13 +63,12 @@ export default {
       "cue": [
         880,
         1100
-      ],
-      "voice": "Hey! I need you! Please check your screen."
+      ]
     },
     {
       "id": "message",
       "label": "New message",
-      "description": "A bouncing envelope, curious alternating eyes and a spoken new-message alert.",
+      "description": "A bouncing envelope, curious eyes and a recorded character call repeated three times.",
       "h": 35,
       "w": 22,
       "bend": 0,
@@ -83,13 +80,12 @@ export default {
       "icon": 3,
       "cue": [
         1040
-      ],
-      "voice": "Hey! You have a new message!"
+      ]
     },
     {
       "id": "finished",
       "label": "Finished",
-      "description": "Happy eyes and a smile. A cute voice says, Ta-da! All done!",
+      "description": "Happy closed eyes and a smile, with a recorded vocal reaction.",
       "h": 6,
       "w": 26,
       "bend": 12,
@@ -103,13 +99,12 @@ export default {
         880,
         1100,
         1320
-      ],
-      "voice": "Ta-da! All done!"
+      ]
     },
     {
       "id": "error",
       "label": "Blocked",
-      "description": "Concerned eyes and a repeating spoken request for help.",
+      "description": "Concerned eyes and a repeating recorded reaction while blocked.",
       "h": 27,
       "w": 21,
       "bend": 0,
@@ -122,8 +117,7 @@ export default {
       "cue": [
         440,
         360
-      ],
-      "voice": "Oops! I need a little help!"
+      ]
     },
     {
       "id": "interrupted",
@@ -138,8 +132,7 @@ export default {
       "mouth": 0,
       "brow": 0,
       "icon": 4,
-      "cue": [],
-      "voice": ""
+      "cue": []
     },
     {
       "id": "disconnected",
@@ -154,8 +147,7 @@ export default {
       "mouth": 0,
       "brow": 0,
       "icon": 5,
-      "cue": [],
-      "voice": ""
+      "cue": []
     }
   ]
 };

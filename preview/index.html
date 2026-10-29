@@ -15,19 +15,22 @@
       <div class="section-heading"><h2>Expressions</h2><span>Pick a state</span></div>
       <div id="states" class="states" role="group" aria-label="Robot states"></div>
       <div class="sound-panel">
-        <div class="sound-top"><div><h2>Hear its voice</h2><p>Cute robot voice. Clear little messages.</p></div><button id="sound" class="toggle" aria-pressed="false">Sound off</button></div>
+        <div class="sound-top"><div><h2>Hear its voice</h2><p>Free recorded voices. Pick a personality.</p></div><button id="sound" class="toggle" aria-pressed="false">Sound off</button></div>
+        <label class="voice-picker" for="voice-style">Voice style <select id="voice-style" aria-label="Recorded voice style"></select></label>
+        <button id="audition" class="quiet">Hear attention sample</button>
+        <p class="voice-note">Character voices use short vocal reactions, not full sentences. Bright/anime-like raises the pitch of the cute recording. <a href="voices/CREDITS.md">Sources &amp; CC0 licenses</a></p>
         <label class="volume">Volume <input id="volume" type="range" min="0" max="100" value="65" aria-label="Preview volume"><output id="volume-value">65%</output></label>
         <button id="replay" class="quiet replay" disabled>Replay this voice</button><span id="cue-description" class="cue-description">This state stays quiet.</span>
       </div>
       <div class="demo-actions"><button id="demo" class="primary">Play demo + sound <span aria-hidden="true">↗</span></button><button id="stop-demo" class="quiet" disabled>Stop demo</button></div>
       <label class="check reduced"><input id="reduced" type="checkbox"> Gentle mode — still expressions, no continuous movement</label>
-      <p id="audio-status" class="audio-status" role="status">Sound starts only after you click. A higher-pitched browser voice; its character varies by device.</p>
+      <p id="audio-status" class="audio-status" role="status">Sound starts only after you click. Recordings are bundled locally. No speech service or account needed.</p>
     </section>
   </div>
   <section id="downloads" class="downloads" aria-labelledby="downloads-title">
     <p class="eyebrow">Make your own</p><h2 id="downloads-title">Downloads &amp; step-by-step setup</h2>
     <p>Everything for the stationary Classic enclosure and baseline AtomS3 firmware, plus the latest browser expression preview.</p>
-    <p class="release-note"><strong>Preview vs device:</strong> the cute voice and revised animations run in this website. The compiled device firmware uses earlier faces and tones. Hardware speech, exact board compatibility and physical print fit still need validation.</p>
+    <p class="release-note"><strong>Preview vs device:</strong> the recorded voices and revised animations run in this website. The compiled device firmware uses earlier faces and tones. Hardware speech, exact board compatibility and physical print fit still need validation.</p>
     <div class="download-grid">
       <a href="setup.html"><strong>Start here: setup guide &rarr;</strong><span>10 steps, Windows + macOS, flashing, Codex hooks, printing and troubleshooting.</span></a>
       <a href="downloads/atom-companion-source.zip" download><strong>Download complete source ZIP</strong><span>Firmware, laptop companion, hooks, editable expressions, CAD code and tests.</span></a>
@@ -35,7 +38,7 @@
       <a href="downloads/atom-v1-classic-firmware.bin" download><strong>Baseline firmware application BIN</strong><span>Previously compiled AtomS3 development image. Follow the source upload guide; this is not a full flash bundle.</span></a>
     </div>
     <p class="part-links">Individual STL: <a href="downloads/body.stl" download>Body</a> &middot; <a href="downloads/bezel.stl" download>Classic bezel</a> &middot; <a href="downloads/keeper.stl" download>Keeper</a> &middot; <a href="downloads/fit_coupons.stl" download>Fit coupons</a></p>
-    <p class="part-links"><a href="downloads/GETTING_STARTED.md" download>Save setup guide</a> &middot; <a href="downloads/checksums.json" download>File checksums</a></p>
+    <p class="part-links"><a href="downloads/recorded-voice-clips.zip" download>Download voice clips + credits</a> &middot; <a href="downloads/GETTING_STARTED.md" download>Save setup guide</a> &middot; <a href="downloads/checksums.json" download>File checksums</a></p>
   </section>
   <footer><span>Classic orange + black</span><span>Eyes and audio only · no motors</span><span>Preview does not send commands to your device.</span></footer>
 </main><script type="module" src="app.mjs"></script></body></html>

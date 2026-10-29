@@ -8,7 +8,7 @@ V1 is stationary: orange Classic bezel, black body, pressable colour face and so
 - `classic-enclosure-models.zip`: body, Classic bezel, rear keeper and fit coupons in STL; main parts also in STEP and 3MF.
 - `atom-v1-classic-firmware.bin`: previously compiled application image, provided for reference. It is not a complete flash bundle; use the source build/upload route below, which supplies the bootloader and partition images too.
 
-The website has the latest animated faces and cute browser speech. The device firmware is an earlier baseline with simpler faces and tones. Browser speech is not embedded speech: the new voice and revised animations have not been ported to, flashed onto or tested on the Atom. The files are a prototype kit, with the exact device variant and physical print fit still to be confirmed.
+The website has the latest animated faces and five recorded voice styles. The device firmware is an earlier baseline with simpler faces and tones. Browser playback is separate from embedded audio: the new recorded voices and revised animations have not been ported to, flashed onto or tested on the Atom. The files are a prototype kit, with the exact device variant and physical print fit still to be confirmed.
 
 ## 2. Check the hardware
 
@@ -126,12 +126,14 @@ Dry-fit the unpowered board in the body, align the screen and USB opening, fit t
 - Port busy: close serial monitors or stop another companion instance.
 - Configuration exists: remove `--init-config` and reuse your existing token file.
 - Manual states work but Codex does not: verify absolute hook paths, `/hooks` trust, the running companion and event coverage.
-- Silent device: check long-press mute and the actual board's speaker capability/driver. Site speech does not stream to the Atom.
-- Silent website: click Sound on, raise the volume, and check browser/OS speech availability. Browser voice quality varies by device.
+- Silent device: check long-press mute and the actual board's speaker capability/driver. Site recordings do not stream to the Atom.
+- Silent website: click Sound on, raise the volume, and check browser audio settings. Use the Voice style selector and Hear attention sample to compare the five recorded options.
 - Tight print: stop assembly and adjust the fit coupon/clearance for your material before reprinting.
 
 ## Edit and verify
 
-Edit `expressions/definitions.json`, then run `python expressions/generate.py` to update the browser table. Firmware presentation remains separately implemented in `firmware/src/presentation.cpp`; generation alone does not port browser speech or animation. Preview the static files with `python -m http.server 8000 --directory preview` and open http://localhost:8000 .
+Edit `expressions/definitions.json`, then run `python expressions/generate.py` to update the browser table. Firmware presentation remains separately implemented in `firmware/src/presentation.cpp`; generation alone does not port browser recordings or animation. Preview the static files with `python -m http.server 8000 --directory preview` and open http://localhost:8000 .
 
 Python checks: `python -m unittest discover -s tests -v`. Browser logic checks require Node: `node --test tests/face.test.mjs tests/audio.test.mjs`. CAD uses Text-to-CAD/Cadgen 0.8.1 and `cad/stationary.py`; see README for regeneration. Earlier motor headers and tests are retained source studies only; V1 has no motor control.
+
+Recorded voice assets are bundled under `preview/voices/` and in the source download. Choose Cute, Bright/anime-like, Warm, Mature or Spoken announcer. Character styles are short vocal reactions rather than full notification sentences. Credits and CC0 source links are in `preview/voices/CREDITS.md`. The voice ZIP on the site includes the selected recordings and credit files.

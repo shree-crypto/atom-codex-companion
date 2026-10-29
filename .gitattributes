@@ -4,3 +4,5 @@
 *.3mf binary
 *.png binary
 *.bin binary
+*.wav binary
+*.ogg binary

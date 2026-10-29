@@ -6,7 +6,7 @@ An M5 Atom desk avatar for Codex activity, with animated eyes, speaker cues and 
 
 ![Classic orange enclosure rendered from actual CAD](assets/iteration-05-assembled-orange.png)
 
-The browser preview includes continuously moving Working eyes, a pulsing Needs you prompt, a bouncing New message envelope and higher-pitched speech. Browser voices vary by device. The device firmware is the earlier compiled baseline with simpler faces and tones; the new browser voice and animation have not been ported to the Atom.
+The browser preview includes continuously moving Working eyes, a pulsing Needs you prompt, a bouncing New message envelope and bundled prerecorded character voices. A selector offers Cute, Bright/anime-like, Warm, Mature and a spoken announcer. The device firmware is the earlier compiled baseline with simpler faces and tones; the new browser recordings and animation have not been ported to the Atom.
 
 ## Project layout
 
@@ -27,9 +27,9 @@ python -m http.server 8000 --directory preview
 
 Open http://localhost:8000 and click **Sound on**. To include local download links, first run `python checks/build_downloads.py`, then serve `sites/atom-expression-lab/dist` instead of `preview`. This generates the static guide and downloads from the included source and models. The browser preview does not communicate with the device.
 
-The preview uses native browser speech synthesis. Installing Python packages, the pinned firmware toolchain and CAD dependencies requires network access. Runtime observer traffic uses laptop loopback and USB. Credentials and local runtime configuration are excluded from this repository. No reuse license has been selected.
+The preview plays bundled CC0 recordings from cicifyre and Kenney. Character styles use vocal reactions, while the announcer uses ready-made words. Bright/anime-like is a pitch variation, not a recording from an anime. See [audio credits](preview/voices/CREDITS.md). Installing Python packages, the pinned firmware toolchain and CAD dependencies requires network access. Runtime observer traffic uses laptop loopback and USB. Credentials and local runtime configuration are excluded from this repository. No reuse license has been selected.
 
-Start with [GETTING_STARTED.md](GETTING_STARTED.md) for the complete Windows/macOS setup sequence. The browser preview uses cute speech and revised animations; the baseline device firmware still uses simpler faces and tones.
+Start with [GETTING_STARTED.md](GETTING_STARTED.md) for the complete Windows/macOS setup sequence. The browser preview uses recorded voices and revised animations; the baseline device firmware still uses simpler faces and tones.
 
 A small physical Codex avatar with eight expressions, quiet attention sounds and a pressable face. V1 has **no motors or motor control**. Motion is reserved for V2.
 
@@ -114,3 +114,5 @@ Text-to-CAD's native image backend failed OCCT pixel readback on this Windows se
 ```
 
 Actual test results and remaining physical checks are recorded in [checks/ACCEPTANCE.md](checks/ACCEPTANCE.md). Close any serial monitor before upload or starting the companion; only one process can own the port. Stop the observer with Ctrl+C. Disconnect shows a disconnected face after five seconds. Reconnect resends current state without repeating old attention sounds.
+
+To rebuild the prepared voice clips from their source ZIPs, use `python checks/prepare_voice_assets.py --archives PATH`; NumPy is required for that optional conversion. Sources and filenames are documented in the audio credits. Playback itself needs no NumPy or speech service.
