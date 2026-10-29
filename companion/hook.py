@@ -20,9 +20,12 @@ def normalize_hook(payload: dict) -> dict | None:
         return None
     mapping = {'UserPromptSubmit': 'start', 'PreToolUse': 'activity',
                'PermissionRequest': 'needs_input', 'PostToolUse': 'resolved',
-               'Stop': 'finished', 'Interrupt': 'interrupt', 'SessionEnd': 'end'}
+               'PostToolUseFailure': 'resolved', 'Stop': 'finished', 'Interrupt': 'interrupt', 'SessionEnd': 'end'}
     hook_name = payload.get('hook_event_name')
     kind = mapping.get(hook_name) if isinstance(hook_name, str) else None
+    tool = payload.get('tool_name', '')
+    if hook_name == 'PostToolUse' and isinstance(tool, str) and tool.endswith('request_user_input_async'):
+        return None  # The tool returned a handle; only its later answer resolves the wait.
     session = payload.get('session_id', payload.get('thread_id'))
     turn = payload.get('turn_id')
     if not kind or not isinstance(session, str) or not session:

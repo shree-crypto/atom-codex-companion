@@ -23,18 +23,25 @@ bool Presentation::setColor(const char* name) {
 }
 
 void Presentation::setState(State state, bool notify, uint32_t now) {
+    if (state==current && state==State::Working) return; // Keep the ambience buffer running across heartbeats.
     if (state!=current || notify) {
         acknowledge();
         current=state; entered=now;
+        if (state==State::Working) { ambient(); return; }
         if (notify && !muted) {
             repeats=(state==State::NeedsInput || state==State::Error) ? 255 :
-                (state==State::Finished || state==State::Message) ? 3 : state==State::Working ? 1 : 0;
+                (state==State::Finished || state==State::Message) ? 3 : 0;
             repeatAt=now;
         }
     }
 }
 
-void Presentation::mute(bool value) { muted=value; if (value) acknowledge(); }
+void Presentation::ambient() {
+    if (!muted && current==State::Working && M5.Speaker.isEnabled())
+        M5.Speaker.playWav(VOICE_WORKING,sizeof(VOICE_WORKING),UINT32_MAX,0,true);
+}
+
+void Presentation::mute(bool value) { muted=value; if (value) acknowledge(); else ambient(); }
 
 void Presentation::acknowledge() { repeats=0; waitingForVoice=false; M5.Speaker.stop(); }
 
@@ -48,7 +55,6 @@ void Presentation::sound(uint32_t now) {
     if (int32_t(now-repeatAt)<0) return;
     const uint8_t* data=nullptr; size_t size=0;
     switch (current) {
-        case State::Working: data=VOICE_WORKING; size=sizeof(VOICE_WORKING); break;
         case State::NeedsInput: data=VOICE_NEEDS_INPUT; size=sizeof(VOICE_NEEDS_INPUT); break;
         case State::Message: data=VOICE_MESSAGE; size=sizeof(VOICE_MESSAGE); break;
         case State::Finished: data=VOICE_FINISHED; size=sizeof(VOICE_FINISHED); break;

@@ -8,8 +8,10 @@ import os
 from pathlib import Path
 import secrets
 import subprocess
+import sys
 import time
-from collections import OrderedDict
+from collections import OrderedDict, deque
+from .rollouts import RolloutWatcher
 from .hook import DEFAULT_CONFIG, forward_hook
 from .state import Event, Reducer, KINDS
 from .transport import SerialLink
@@ -31,10 +33,25 @@ def make_server(token: str, reducer: Reducer, *, port: int = 52341) -> HTTPServe
             except (BrokenPipeError, ConnectionResetError):
                 pass
 
+        def do_GET(self):
+            if self.headers.get('Origin') or not hmac.compare_digest(self.headers.get('Authorization', '').encode(), ('Bearer '+token).encode()):
+                return self.reply(401)
+            if self.path != '/status':
+                return self.reply(404)
+            return self.reply(200, self.server.health())
+
+        def discard_small_body(self):
+            try:
+                size=int(self.headers.get('Content-Length','0'))
+                if 0<size<=4096:self.rfile.read(size)
+            except (ValueError,OSError):pass
+
         def do_POST(self):
             if self.headers.get('Origin'):
+                self.discard_small_body()
                 return self.reply(403)
             if not hmac.compare_digest(self.headers.get('Authorization', '').encode('utf-8'), ('Bearer ' + token).encode('utf-8')):
+                self.discard_small_body()
                 return self.reply(401)
             if self.path not in ('/event', '/ack'):
                 return self.reply(404)
@@ -80,6 +97,7 @@ def make_server(token: str, reducer: Reducer, *, port: int = 52341) -> HTTPServe
                 if body['kind'] == 'end' and body['session'] in reducer.sessions:
                     body['turn'] = reducer.sessions[body['session']].turn
                 self.server.counter += 1
+                self.server.evidence.append(dict(source='hook',kind=body['kind'],session=body['session'],turn=body['turn'],at_ns=time.monotonic_ns()))
                 reducer.apply(Event(seq=self.server.counter, **body))
             self.reply(200, asdict(reducer.snapshot))
 
@@ -90,6 +108,8 @@ def make_server(token: str, reducer: Reducer, *, port: int = 52341) -> HTTPServe
             return sock, addr
 
     server = LocalServer(('127.0.0.1', port), Handler)
+    server.evidence = deque(maxlen=24)
+    server.health = lambda: dict(state=reducer.snapshot.state)
     server.counter = 0
     server.seen = OrderedDict()
     server.timeout = 0.02
@@ -121,8 +141,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--listen-port', type=int, default=52341)
     parser.add_argument('--init-config', action='store_true')
     parser.add_argument('--dry-run', action='store_true', help='Observe without serial hardware')
+    parser.add_argument('--codex-events', action='store_true', help='Observe new local Codex lifecycle records')
+    parser.add_argument('--codex-home', type=Path, default=Path(os.environ.get('CODEX_HOME',Path.home()/'.codex')))
+    parser.add_argument('--log-file', type=Path, help='Local state-only background log')
+    parser.add_argument('--thread', help='Optional single thread UUID; default observes all local chats')
     parser.add_argument('--emit', choices=sorted(KINDS), help='Send a manual test event and exit')
     args = parser.parse_args(argv)
+    if args.log_file:
+        args.log_file.parent.mkdir(parents=True,exist_ok=True)
+        sys.stdout = args.log_file.open('a',encoding='utf-8',buffering=1)
+        sys.stderr = sys.stdout
     if args.init_config:
         init_config(args.config, args.listen_port)
         print('Created private observer configuration at', args.config)
@@ -140,12 +168,25 @@ def main(argv: list[str] | None = None) -> int:
     reducer = Reducer()
     server = make_server(config['token'], reducer, port=args.listen_port)
     link = None if args.dry_run else SerialLink(args.port, acknowledge=reducer.acknowledge)
+    watcher = RolloutWatcher(args.codex_home/'sessions', thread=args.thread) if args.codex_events else None
+    evidence = server.evidence
+    server.health = lambda: dict(pid=os.getpid(), state=reducer.snapshot.state, seq=reducer.snapshot.seq,
+        device_connected=bool(link and link.ready), port=args.port,
+        source='codex_rollouts' if watcher else 'hooks',
+        events_seen=watcher.events if watcher else server.counter,
+        recent_events=list(evidence))
     last = None
     print('Observer running on loopback; hardware:', 'disabled' if link is None else args.port)
     try:
         while True:
             server.handle_request()
             now = time.monotonic()
+            if watcher:
+                for event in watcher.poll(now):
+                    server.counter += 1
+                    reducer.apply(Event(seq=server.counter, **event))
+                    evidence.append(dict(source='rollout',kind=event['kind'], session=event['session'],
+                                         turn=event['turn'], at_ns=event['observed_at_ns']))
             snapshot = reducer.tick(now)
             if link:
                 link.tick(now, snapshot)

@@ -6,7 +6,9 @@ An M5 Atom desk avatar for Codex activity, with animated eyes, speaker cues and 
 
 ![Classic orange enclosure rendered from actual CAD](assets/iteration-06-assembled-orange.png)
 
-The browser preview includes continuously moving Working eyes, a pulsing Needs you prompt, a bouncing New message envelope and bundled prerecorded character voices. A selector offers Cute, Bright/anime-like, Warm, Mature and a spoken announcer. The current hardware target is AtomS3R C126 with the Atomic Echo Base A149. The Arduino CLI build embeds the default Cute recordings and updated active faces; the website retains all five voice styles for comparison. See [Arduino build and device diagnostics](firmware/ARDUINO.md).
+The current target is AtomS3R C126 with the Atomic Echo Base A149. Firmware 2.4 combines smooth 60 fps expressions, quiet 66 BPM lo-fi music during Working, and fixed Hinata/Kakashi/Naruto/Killer Bee alerts. The browser's M5 fixed set auditions the same local audio files.
+
+The included Windows installer connects all local Codex chats automatically, starts the USB companion at sign-in and preserves existing hooks. Five native Codex hooks cover task/activity/input/completion notifications; a read-only local lifecycle adapter supplies new-message and structured question/answer events. See [automatic setup](GETTING_STARTED.md#8-connect-codex-automatically), [event coverage](checks/event-coverage.md) and the [desktop pet backend findings](checks/CODEX_AVATAR_BACKEND.md).
 
 ## Project layout
 

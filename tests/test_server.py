@@ -31,6 +31,15 @@ class ServerTests(unittest.TestCase):
             e.close()
             return code
 
+    def test_status_requires_local_authentication(self):
+        target=self.url.removesuffix('/event')+'/status'
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            urllib.request.urlopen(target)
+        self.assertEqual(error.exception.code,401)
+        request=urllib.request.Request(target,headers={'Authorization':'Bearer test-token'})
+        with urllib.request.urlopen(request) as response:
+            self.assertEqual(json.load(response)['state'],'idle')
+
     def test_authenticated_event_reaches_reducer(self):
         self.assertEqual(self.send(dict(session='a', turn='t', kind='start')), 200)
         self.assertEqual(self.reducer.snapshot.state, 'working')

@@ -16,6 +16,7 @@ class Presentation {
     bool waitingForVoice=false;
     void render(uint32_t now);
     void sound(uint32_t now);
+    void ambient();
 public:
     void begin(bool soundMuted);
     void setState(State state, bool notify, uint32_t now);

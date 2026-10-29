@@ -80,8 +80,8 @@ test('automatic anime rotation changes repeated lines; explicit choice stays fix
 });
 
 
-test('device crew uses one fixed phrase per state and five different characters',()=>{
- const expected={working:'Shikamaru',needs_input:'Hinata',message:'Kakashi',finished:'Naruto',error:'Killer Bee'};
+test('device pack fixes the working ambience and four character alerts',()=>{
+ const expected={working:'Ambient',needs_input:'Hinata',message:'Kakashi',finished:'Naruto',error:'Killer Bee'};
  const sources=new Set();
  for(const [state,character] of Object.entries(expected)){
   const plan=voicePlan(state,'naruto-device');assert.ok(plan.text.startsWith(character+' — '));
@@ -90,4 +90,12 @@ test('device crew uses one fixed phrase per state and five different characters'
  }
  assert.equal(sources.size,5);
  for(const state of ['idle','interrupted','disconnected'])assert.equal(voicePlan(state,'naruto-device').src,'');
+});
+
+
+test('working ambience loops natively and stops as soon as an alert takes over',t=>{
+ const {sound,players,pauses}=harness(t);sound.setStyle('naruto-device');sound.play('working');
+ assert.equal(players[0].loop,true);assert.equal(voicePlan('working','naruto-device').ambient,true);
+ sound.play('needs_input');assert.equal(pauses(),1);assert.equal(players[1].loop,false);
+ sound.mute();assert.equal(pauses(),2);assert.equal(sound.player,null);
 });

@@ -69,7 +69,7 @@ def main():
                 'firmware/test/test_limits/*.cpp', 'expressions/*.py', 'expressions/definitions.json', 'expressions/device_voice_pack.json',
                 'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'preview/voices/*.md', 'preview/voices/*.txt', 'preview/voices/*.json',
                 'preview/voices/*/*.wav', 'preview/voices/*/*.ogg', 'tests/*.py', 'tests/*.mjs',
-                'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md', 'checks/HARDWARE_S3R_ECHO.md', 'checks/hardware-s3r-echo.json',
+                'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md', 'checks/CODEX_AVATAR_BACKEND.md', 'checks/HARDWARE_S3R_ECHO.md', 'checks/hardware-s3r-echo.json',
                 'cad/*.py', 'cad/dimensions.json']
     sources = sorted({p for pattern in patterns for p in ROOT.glob(pattern) if p.is_file()})
     assert sources and (ROOT / 'GETTING_STARTED.md') in sources

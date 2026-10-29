@@ -3,6 +3,11 @@ from companion.state import Event, Reducer
 
 
 class StateTests(unittest.TestCase):
+    def test_stop_cannot_clear_an_unanswered_question(self):
+        reducer=Reducer();reducer.apply(Event('s','t',1,'needs_input','q'))
+        self.assertEqual(reducer.apply(Event('s','t',2,'finished')).state,'needs_input')
+        self.assertEqual(reducer.apply(Event('s','t',3,'resolved','q')).state,'working')
+
     def test_other_completion_cannot_hide_input(self):
         r = Reducer()
         r.apply(Event('a', 't1', 1, 'start'))

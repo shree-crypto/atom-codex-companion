@@ -1,14 +1,14 @@
 # Fixed Naruto crew device pack
 
-The user-selected device pack in `naruto-device/` contains five short dialogue samples, converted to 16 kHz mono PCM and balanced to -19 LUFS with a -3 dB true-peak target. They are third-party anime dialogue, **not CC0**. Community upload labels identify the characters; original source links, file hashes and durations are recorded in `expressions/device_voice_pack.json` and the generated `preview/device-voices.mjs`.
+The user-selected device pack in `naruto-device/` contains four short dialogue samples and original generated working music, converted to 16 kHz mono PCM and balanced to -19 LUFS with a -3 dB true-peak target. They are third-party anime dialogue, **not CC0**. Community upload labels identify the characters; original source links, file hashes and durations are recorded in `expressions/device_voice_pack.json` and the generated `preview/device-voices.mjs`.
 
-- Working — Shikamaru: https://www.myinstants.com/en/instant/shikamaru-sounds-like-a-drag-1/
+- Working — original 66 BPM lo-fi instrumental; generator: `expressions/generate_working_lofi.py`; quiet keys, bass and brushed drums, four-bar loop.
 - Needs input — Hinata: https://myinstantplay.com/sound/hinata-naruto-kun
 - New message — Kakashi: https://www.myinstants.com/en/instant/kakashi-nani/
 - Finished — Naruto: https://myinstantplay.com/sound/narutou002dbelieve-it
 - Error — Killer Bee: https://www.myinstants.com/en/instant/bakayaro-konoyaro-killerb-91562/
 
-The firmware embeds these five clips locally. Existing broader anime audition packs remain online references.
+The firmware embeds the four dialogue clips and generated music locally. Existing broader anime audition packs remain online references.
 
 # Online anime samples
 

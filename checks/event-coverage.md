@@ -1,20 +1,21 @@
-# Observed-event contract and current coverage
+# Automatic Codex event coverage
 
-No live Codex-to-physical-Atom acceptance has been performed.
+2026-10-30: A background companion was connected to the physical AtomS3R + Echo Base on Windows. Real local Codex start/activity/message/completion records were observed. A genuine scope-selection question produced Needs input and its user's answer produced Resolved. The device handshake and serial connection were live. Physical expression quality and audibility still depend on the user's inspection.
 
-| Input | Current behavior | Evidence |
+| Source | Behavior | Validation |
 | --- | --- | --- |
-| UserPromptSubmit | Working, retires previous turn | Automated reducer/ingress tests |
-| PreToolUse | Working; preserves pending request and unacknowledged error | Automated tests |
-| PermissionRequest | Needs input; observer emits no decision | Automated hook/ingress tests |
-| PostToolUse | Clears only matching request; fallback identity only when no source ID exists | Automated reducer tests |
-| Stop | Finished/stopping-turn cue, never inferred success | Automated mapping test; exact app lifecycle still requires live qualification |
-| Interrupt | Interrupted; no happy completion | Automated reducer test |
-| SessionEnd | Removes session | Implemented, live event delivery not qualified |
-| SubagentStop | Ignored; cannot complete parent | Automated hook test |
-| General clarification question | No automatic detector | Unsupported by the confirmed hook mappings |
-| Peer/agent incoming message | Manual event supported | Automatic event route unverified |
-| Approval dismissed without execution | May retain waiting state | No confirmed resolution event; no fabricated detection |
-| Explicit task failure | Manual error event supported | Automatic failure mapping not confirmed |
+| task_started | Working | Live Codex record |
+| completed command/tool/file item | Working underneath temporary messages | Live records and tests |
+| assistant commentary item | New message for 3 seconds | Live record and tests |
+| request_user_input / request_user_input_async | Needs input keyed by call ID | Live asynchronous question and tests |
+| synchronous tool answer / structured asynchronous answer | Clears only the matching wait | Live answer and tests |
+| task_complete | Finished; outstanding input and other active work retain priority | Live completion records and tests |
+| child-agent interaction/completion item | New message; never finishes the parent | Structured-item tests |
+| turn_aborted | Paused | Parser support; live interruption not qualified |
+| UserPromptSubmit / PreToolUse / Stop hooks | Native start/activity/completion route | Installed and exact definitions trusted |
+| PermissionRequest hook | Needs input; no approval decision | Installed and native API confirms trusted |
+| PostToolUse hook | Resolves only matching request | Installed/trusted and ingress tests |
+| dismissed approval with no execution/result event | May retain waiting state | Not live-qualified |
+| ordinary prose question without a structured input tool | No question inference | Intentional: no prompt-text heuristics |
 
-Only status identifiers and opaque hashes are forwarded. Duplicate HTTP deliveries with the same event ID are suppressed. A provided source event ID is hashed and retained; otherwise an invocation ID distinguishes separate Stops after continued work. Repeating an already-finished state without intervening activity does not re-arm an acknowledged cue. Hook-invocation monotonic timestamps reject reversed delivery; process scheduling before hook execution is outside that guarantee.
+The local JSONL format is not a stable public API. Unknown records are ignored. This adapter is checked against the installed desktop Codex 0.165.0-alpha.1.2 format (the CLI 0.149.1 hook protocol was also inspected); format changes may require updating it. New events are observed without replaying historical alerts. Other Codex homes and cloud-only chats need separate event sources. No prompt, answer, source-code or reasoning text is forwarded to the robot.

@@ -53,7 +53,7 @@ function choose(id,play=true){
   const state=states.get(id);$('current-name').textContent=state.label;$('description').textContent=state.description;
   for(const button of $('states').children)button.setAttribute('aria-pressed',String(button.dataset.id===id));
   syncPhrases();
-  const cue=voicePlan(id,sound.style);$('cue-description').textContent=cue.text?cue.text+' · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'plays once':'repeats 3 times'):'This state stays quiet.';
+  const cue=voicePlan(id,sound.style);$('cue-description').textContent=cue.ambient?cue.text+' · continuous quiet loop while working':cue.text?cue.text+' · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'plays once':'repeats 3 times'):'This state stays quiet.';
   if(play)sound.play(id);syncSound();draw();
 }
 function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound';}

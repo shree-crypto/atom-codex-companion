@@ -113,13 +113,32 @@ In a second terminal, in the same folder, run these one at a time. On macOS repl
 
 Check the display and speaker. Short press acknowledges the local alert; long press toggles persisted mute. Acknowledging the robot never approves a Codex operation. These manual events verify the connection, not automatic Codex integration.
 
-## 8. Connect Codex events
+## 8. Connect Codex automatically
 
-Open `hooks/config.example.json`. Replace `ABSOLUTE_PYTHON_PATH` with the full path to this virtual environment's Python and `ABSOLUTE_ROBOT_ROOT` with the extracted project folder. Keep both paths quoted. Merge its event entries into your existing `~/.codex/hooks.json`, or a trusted project's `.codex/hooks.json`. Preserve existing hooks and avoid installing the same entries twice.
+On Windows, use the included installer after Codex CLI and Python dependencies are installed. Close any manual serial monitor or foreground companion first. From the source folder:
 
-Restart the Codex session, open `/hooks` in the CLI, review and trust the new command definitions. New or changed untrusted hooks are skipped. Official configuration and trust instructions: https://learn.chatgpt.com/docs/hooks . Desktop delivery depends on the installed Codex version; use the CLI to inspect hook configuration and confirm delivery before relying on it.
+```powershell
+$codexExe = (Get-ChildItem "$env:APPDATA\npm\node_modules\@openai\codex" -Recurse -Filter codex.exe | Select-Object -First 1).FullName
+.venv\Scripts\python.exe checks/install_windows.py --port COM5 --codex-exe "$codexExe"
+```
 
-With the companion running, submit a prompt: the robot should show Working. A permission request should show Needs you; a completed turn should show Finished. Do not deliberately authorize a risky action just to test an alert. Incoming peer messages, general clarification questions, failure events and dismissed approvals do not yet have confirmed automatic coverage. See `checks/event-coverage.md`; New message can be previewed on the site or sent manually using the event kinds supported by the companion.
+Substitute your device's actual port and installed native Codex executable. The installer starts a hidden background companion, adds the current user's Windows sign-in startup entry, preserves existing hooks, and registers five silent native hooks through Codex's own configuration API. The generated token stays in a restricted local file. Re-running setup preserves its token and avoids duplicate hooks or background instances.
+
+The companion follows new structured lifecycle records in this user's local `~/.codex/sessions` directory: turn starts/tools show Working, assistant progress messages show New message briefly, structured user-input tools show Needs you, answers clear their matching request, and completed turns show Finished when no higher-priority work or input remains. It observes all local chats by default. Historical alerts are not replayed on startup. Remote/cloud-only chats or another CODEX_HOME are not included automatically.
+
+Native UserPromptSubmit, PreToolUse, Stop, PermissionRequest and PostToolUse hooks cover starts, activity, completion and permission waiting/resolution. The structured record observer fills in new messages and explicit question/answer events and provides immediate compatibility for already-running chats. Their exact observer definitions are reviewed and trusted through the installed Codex API; unrelated hooks are preserved. If your Codex installation lacks that API, use `/hooks` to review only the observer commands. Already-running Codex sessions may need a new session before newly added native hooks load; the local lifecycle observer works immediately. Dismissed approval dialogs without a matching tool-resolution event remain an unverified edge case.
+
+To run in the foreground instead, on Windows or macOS:
+
+```text
+python -m companion.main --port YOUR_PORT --codex-events
+```
+
+Install the `requirements.txt` dependencies into that Python environment first. A private configuration must exist (`python -m companion.main --init-config`). The background installer creates it automatically. Add `--thread THREAD_UUID` to observe only one chat.
+
+The observer reads records locally and forwards only state identifiers and hashed IDs to the M5. It never forwards prompts, answers, source code or reasoning content. The authenticated status endpoint is local to 127.0.0.1. Pressing the M5 face only silences notifications; it never approves a tool action.
+
+Windows startup can be disabled by removing only `AtomCodexCompanion` from `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Its installation receipt and state-only log are in `%LOCALAPPDATA%\AtomCodexCompanion`. Hook backups are stored there too. Stop the exact companion process before flashing or opening a serial monitor.
 
 ## 9. Print a fit coupon, then the enclosure
 
@@ -168,23 +187,23 @@ Send only the desired COLOR line. The selected colour persists across restart. I
 
 ## Audition anime character lines
 
-The browser preview has Naruto (9 clips), Jujutsu Kaisen (10 clips), and My Hero Academia (5 clips) packs. Select a pack, choose an expression, and enable sound. The Phrase selector lets you audition any line in that pack. Rotate through phrases changes the line each time, including repeated alerts; Try another phrase plays one sample. Sound off cancels playback and pending repeats.
+The browser preview also has Naruto (9 clips), Jujutsu Kaisen (10 clips), and My Hero Academia (5 clips) packs. Select a pack, choose an expression, and enable sound. The Phrase selector lets you audition any line in that pack. Rotate through phrases changes the line each time, including repeated alerts; Try another phrase plays one sample. Sound off cancels playback and pending repeats.
 
 Anime samples stream from their original community soundboard host and need an internet connection. Open original soundboard clip shows the source of the current recording. These references are for auditioning; the flashed firmware now uses the fixed Naruto crew set described below.
 
 ## Fixed Naruto crew on the M5
 
-Firmware 2.2 uses one fixed dialogue clip for each audible alert state, with no random selection:
+Firmware 2.4 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
 
-- Working: Shikamaru — “Sounds like a drag.”
+- Working: quiet slow lo-fi music, looped locally until the state changes or you mute it.
 - Needs input: Hinata — “Naruto-kun!”
 - New message: Kakashi — “Nani?!”
 - Finished: Naruto — “Believe it!”
 - Error/blocked: Killer Bee — “Bakayaro, konoyaro!”
 
-Idle, paused and disconnected retain their quiet faces. Working plays once; message and completion repeat three times. Input/error cues repeat after the recording finishes and a three-second gap until acknowledged or the state changes. Short-press the display to silence a cue; long-press to mute persistently. A press never approves a Codex action.
+Idle, paused and disconnected retain their quiet faces. Working ambience loops continuously; message and completion repeat three times. Input/error cues repeat after the recording finishes and a three-second gap until acknowledged or the state changes. Short-press the display to silence a cue; long-press to mute persistently. A press never approves a Codex action.
 
-Select **Naruto crew · M5 fixed set** in the browser to audition the same files. The WAVs are bundled in `preview/voices/naruto-device/`: 16 kHz, mono, 16-bit PCM. They play without Wi-Fi or an online speech service on the M5. Original community soundboard links and processed-file SHA-256 hashes are in `expressions/device_voice_pack.json`; anime dialogue is third-party material, separate from the CC0 packs.
+Select **Naruto crew · M5 fixed set** in the browser to audition the same files. The four voice cues and generated music WAV are bundled in `preview/voices/naruto-device/`: 16 kHz, mono, 16-bit PCM. They play without Wi-Fi or an online speech service on the M5. Original community soundboard links and processed-file SHA-256 hashes are in `expressions/device_voice_pack.json`; anime dialogue is third-party material, separate from the CC0 packs.
 
 To regenerate the firmware audio header and matching browser metadata after editing those WAVs and their manifest:
 
@@ -193,3 +212,10 @@ python expressions/generate_device_audio.py
 ```
 
 Then follow the Arduino build/upload instructions above. The generator checks each file's hash and WAV format before embedding it.
+
+To regenerate the original lo-fi working loop before rebuilding its embedded header, install the optional generation dependencies (`python -m pip install -r requirements-render.txt`):
+
+```text
+python expressions/generate_working_lofi.py
+python expressions/generate_device_audio.py
+```

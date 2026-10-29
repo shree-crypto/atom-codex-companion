@@ -77,6 +77,8 @@ class Reducer:
         s.seq = event.seq
         if event.observed_at_ns:
             s.observed_at_ns = event.observed_at_ns
+        if event.kind == 'finished' and s.requests:
+            return self._select(now)
         if s.state == 'error' and not s.acknowledged and event.kind in ('activity', 'resolved'):
             return self._select(now)
         if s.state == 'finished' and event.kind == 'finished':
@@ -88,7 +90,8 @@ class Reducer:
         elif event.kind == 'message':
             s.message_until = now + 3
         else:
-            s.message_until = 0
+            if event.kind not in ('activity', 'resolved'):
+                s.message_until = 0
             keep_acknowledgement = bool(s.requests) and event.kind in ('activity', 'resolved')
             duplicate_request = event.kind == 'needs_input' and (event.request_id or 'approval') in s.requests
             if event.kind == 'needs_input':
@@ -116,7 +119,7 @@ class Reducer:
                 state = 'idle'
             if s.message_until > now and state not in ('needs_input', 'error'):
                 state = 'message'
-            notify = state in ('needs_input', 'message', 'error', 'finished') and not s.acknowledged
+            notify = state in ('working', 'needs_input', 'message', 'error', 'finished') and not s.acknowledged
             choices.append((rank[state], s.changed, key, state, notify))
         if choices:
             _, _, key, state, notify = max(choices)

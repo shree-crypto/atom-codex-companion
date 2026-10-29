@@ -27,6 +27,10 @@ class HookTests(unittest.TestCase):
     def test_missing_identity_is_ignored(self):
         self.assertIsNone(normalize_hook({'hook_event_name': 'Stop'}))
 
+    def test_async_question_handle_does_not_resolve_the_pending_answer(self):
+        payload=dict(hook_event_name='PostToolUse',tool_name='request_user_input_async',session_id='s',turn_id='t',tool_use_id='call_q')
+        self.assertIsNone(normalize_hook(payload))
+
     def test_absent_companion_does_not_fail_hook(self):
         self.assertIsNone(forward_hook({'kind': 'finished'}, 'http://127.0.0.1:1/event', 'x'))
 

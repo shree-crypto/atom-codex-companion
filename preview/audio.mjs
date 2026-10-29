@@ -26,14 +26,14 @@ export function voicePlan(id,style='cute',variation=0){
   const profile=voiceStyles.find(s=>s.id===style);if(!profile)throw new RangeError('Unknown voice style');
   if(profile.fixed){
     const clip=deviceVoicePack.states[id];
-    return {text:clip?clip.character+' — '+clip.phrase:'',src:clip?'voices/'+clip.file:'',source:clip?.source||'',rate:1,
-      repeats:id==='needs_input'||id==='error'?Infinity:id==='working'?1:3};
+    return {text:clip?clip.character+' — '+clip.phrase:'',src:clip?'voices/'+clip.file:'',source:clip?.source||'',rate:1,ambient:!!clip?.loop,
+      repeats:clip?.loop?Infinity:id==='needs_input'||id==='error'?Infinity:id==='working'?1:3};
   }
   const options=voiceOptions(id,style);
   if(profile.online){
     const clip=options[((variation%options.length)+options.length)%options.length];
-    return {text:clip?.text||'',src:clip?.src||'',source:clip?.source||'',rate:1,
-      repeats:id==='needs_input'||id==='error'?Infinity:id==='working'?1:3};
+    return {text:clip?.text||'',src:clip?.src||'',source:clip?.source||'',rate:1,ambient:!!clip?.loop,
+      repeats:clip?.loop?Infinity:id==='needs_input'||id==='error'?Infinity:id==='working'?1:3};
   }
   const spoken={working:'Go!',needs_input:'Ready?',message:'Ready?',finished:'Mission completed',error:'Hold!'};
   return {text:reactions[id]?(style==='spoken'?spoken[id]:reactions[id]):'',src:reactions[id]?`voices/${profile.folder}/${id}.${profile.ext||'wav'}`:'',rate:profile.rate,
@@ -57,7 +57,7 @@ export class SoundPreview {
     let plan=nextPlan();if(!plan.src)return;
     const generation=this.generation;let remaining=once?1:plan.repeats;
     const player=new Audio(plan.src);this.player=player;
-    player.volume=this.volume;player.playbackRate=plan.rate;player.preservesPitch=false;
+    player.volume=this.volume;player.playbackRate=plan.rate;player.preservesPitch=false;player.loop=!!plan.ambient;
     const fail=()=>{if(generation!==this.generation)return;this.stop();this.onError?.('Recording could not play. Check your browser audio settings and try Hear sample.');};
     const cycle=()=>{
       if(generation!==this.generation||!this.enabled)return;
@@ -65,6 +65,7 @@ export class SoundPreview {
     };
     player.onended=()=>{
       if(generation!==this.generation)return;
+      if(plan.ambient)return;
       remaining--;
       if(remaining>0){plan=nextPlan();this.timer=setTimeout(cycle,plan.repeats===Infinity?3000:1200);}
     };

@@ -19,7 +19,7 @@ for state in STATES:
     with wave.open(str(path), 'rb') as audio:
         assert audio.getframerate() == 16000 and audio.getnchannels() == 1
         assert audio.getsampwidth() == 2 and audio.getcomptype() == 'NONE'
-        assert 0 < audio.getnframes() <= 16000 * 12
+        assert 0 < audio.getnframes() <= 16000 * (32 if row.get('loop') else 12)
     lines.append('const uint8_t VOICE_' + state.upper() + '[] PROGMEM = {')
     lines.extend('  ' + ','.join(f'0x{v:02x}' for v in data[i:i+24]) + ',' for i in range(0, len(data), 24))
     lines.append('};')
