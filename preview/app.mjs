@@ -1,0 +1,63 @@
+import {Animator,sample,svg,definitions} from './face.mjs';
+import {SoundPreview,voicePlan} from './audio.mjs';
+const $=id=>document.getElementById(id);
+const sound=new SoundPreview(),face=new Animator('idle',0);
+let now=0,previous=performance.now(),lastDraw=-Infinity,paused=false,demo=false,demoIndex=0,demoAt=0;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
+const states=new Map(definitions.states.map(s=>[s.id,s]));
+for(const s of definitions.states){
+  const button=document.createElement('button');button.className='state';button.dataset.id=s.id;
+  button.setAttribute('aria-pressed',String(s.id==='idle'));
+  const mini=document.createElement('span');mini.className='mini';mini.setAttribute('aria-hidden','true');mini.innerHTML=svg(sample(s.id,0,{reduced:true}));
+  const label=document.createElement('span');label.className='state-label';label.textContent=s.label;
+  button.append(mini,label);button.addEventListener('click',()=>{stopDemo();choose(s.id,true);});$('states').append(button);
+}
+function syncSound(){
+  $('sound').textContent=sound.enabled?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(sound.enabled));
+  $('replay').disabled=!sound.enabled||!voicePlan(face.id).text;
+}
+function draw(){
+  const f=face.frame(now,{reduced:$('reduced').checked});
+  $('face').innerHTML=svg(f,{muted:!sound.enabled});
+  $('face').setAttribute('aria-label',states.get(face.id).label+' expression');
+}
+function choose(id,play=true){
+  face.setState(id,now,{immediate:paused||$('reduced').checked,restart:true});
+  const state=states.get(id);$('current-name').textContent=state.label;$('description').textContent=state.description;
+  for(const button of $('states').children)button.setAttribute('aria-pressed',String(button.dataset.id===id));
+  const cue=voicePlan(id);$('cue-description').textContent=cue.text?'“'+cue.text+'” · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'spoken once':'repeats 3 times'):'This state stays quiet.';
+  if(play)sound.play(id);syncSound();draw();
+}
+function stopDemo(){demo=false;$('stop-demo').disabled=true;$('demo').textContent='Play demo + sound â†—';}
+$('sound').addEventListener('click',async()=>{
+  try{if(sound.enabled)sound.mute();else{await sound.enable();sound.play(face.id);}
+    $('audio-status').textContent=sound.enabled?'Sound enabled. State buttons play their matching robot voice.':'Muted. Expressions still show every state.';
+  }catch(error){$('audio-status').textContent=error.message;}syncSound();draw();
+});
+$('volume').addEventListener('input',event=>{sound.volume=Number(event.target.value)/100;$('volume-value').value=event.target.value+'%';});
+$('replay').addEventListener('click',()=>sound.play(face.id));
+$('pause').addEventListener('click',()=>{
+  paused=!paused;$('pause').setAttribute('aria-pressed',String(paused));$('pause').textContent=paused?'Resume animation':'Pause animation';
+  if(paused)sound.stop();
+});
+$('actual-size').addEventListener('change',event=>document.querySelector('.robot').classList.toggle('actual',event.target.checked));
+$('reduced').addEventListener('change',draw);
+reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
+$('demo').addEventListener('click',async()=>{
+  try{await sound.enable();syncSound();paused=false;$('pause').textContent='Pause animation';$('pause').setAttribute('aria-pressed','false');
+    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo runningâ€¦';choose(definitions.states[0].id);
+    $('audio-status').textContent='Demo: each state runs for 10 seconds, with its matching sound.';
+  }catch(error){$('audio-status').textContent=error.message;}
+});
+$('stop-demo').addEventListener('click',()=>{stopDemo();sound.stop();});
+document.addEventListener('visibilitychange',()=>{previous=performance.now();if(document.hidden)sound.stop();});
+function tick(time){
+  const delta=Math.min(100,time-previous);previous=time;
+  if(!paused&&!document.hidden)now+=delta;
+  if(demo&&!paused&&now-demoAt>=10000){
+    demoAt=now;demoIndex++;
+    if(demoIndex>=definitions.states.length){stopDemo();choose('idle',false);}else choose(definitions.states[demoIndex].id);
+  }
+  if(time-lastDraw>=50){draw();lastDraw=time;}requestAnimationFrame(tick);
+}
+choose('idle',false);requestAnimationFrame(tick);

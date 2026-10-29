@@ -1,0 +1,22 @@
+{
+  "status": "nominal prototype; measure before full printing",
+  "material_options": ["PLA", "ABS"],
+  "colours": {"head_shell": "black", "base_shell": "black", "bezel": "green", "base_lid": "black", "cradle": "black"},
+  "single_colour_supported": true,
+  "board": {"sku_assumption": "M5Stack AtomS3 C123", "width": 24.0, "height": 24.0, "depth": 13.0, "clearance_each_side": 0.3, "source": "https://docs.m5stack.com/en/core/AtomS3"},
+  "servo": {"model": "SG90 positional, exact unit unmeasured", "case_length": 22.7, "case_width": 12.2, "case_height": 27.0, "horn_recess_length": 26.0, "horn_recess_width": 8.0, "source": "https://towerpro.com.tw/product/sg90-7/", "note": "case, mounting ears, shaft offset and horn vary; fit coupons required"},
+  "shell_wall": 2.4,
+  "head_width": 40.0,
+  "head_height": 40.0,
+  "head_depth": 32.0,
+  "base_width": 70.0,
+  "base_depth": 60.0,
+  "base_height": 30.0,
+  "pivot_height": 76.0,
+  "pivot_y": 7.2,
+  "snap_clearance": 0.3,
+  "snap_beam_thickness": 1.2,
+  "snap_hook_projection": 0.8,
+  "pan_preview_limit_deg": 25,
+  "tilt_preview_limit_deg": 12
+}

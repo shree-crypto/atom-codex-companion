@@ -1,0 +1,12 @@
+{
+  "note": "Merge these events into existing Codex hooks. Replace both absolute paths before use. Do not replace existing hooks.",
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "PermissionRequest": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "PostToolUse": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "Interrupt": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}],
+    "SessionEnd": [{"hooks": [{"type": "command", "command": "\"ABSOLUTE_PYTHON_PATH\" \"ABSOLUTE_ROBOT_ROOT/hooks/observe.py\"", "timeout": 1}]}]
+  }
+}

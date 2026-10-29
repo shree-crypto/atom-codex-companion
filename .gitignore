@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.pio/
+.pio-core/
+.runtime/
+.env
+.env.*
+*.log
+cad/review/
+config.json
+sites/
