@@ -14,7 +14,7 @@ test('starts disabled; quiet states have no recording',()=>{
  for(const id of ['idle','interrupted','disconnected'])assert.equal(voicePlan(id).src,'');
 });
 test('five styles map every voiced state to a bundled WAV or OGG',()=>{
- assert.equal(voiceStyles.filter(s=>!s.online).length,5);
+ assert.equal(voiceStyles.filter(s=>!s.online&&!s.fixed).length,5);
  for(const style of voiceStyles.filter(s=>!s.online))for(const id of ['working','needs_input','message','finished','error']){
   const plan=voicePlan(id,style.id),data=readFileSync(new URL('../preview/'+plan.src,import.meta.url));
   assert.ok(['RIFF','OggS'].includes(data.subarray(0,4).toString()));assert.ok(data.length>100);
@@ -77,4 +77,17 @@ test('automatic anime rotation changes repeated lines; explicit choice stays fix
  sound.stop();sound.variation=1;sound.play('needs_input');const chosen=players[1].src;
  players[1].onended();t.mock.timers.tick(3000);assert.equal(players[1].src,chosen);
  sound.mute();t.mock.timers.tick(3000);assert.equal(sound.player,null);
+});
+
+
+test('device crew uses one fixed phrase per state and five different characters',()=>{
+ const expected={working:'Shikamaru',needs_input:'Hinata',message:'Kakashi',finished:'Naruto',error:'Killer Bee'};
+ const sources=new Set();
+ for(const [state,character] of Object.entries(expected)){
+  const plan=voicePlan(state,'naruto-device');assert.ok(plan.text.startsWith(character+' — '));
+  assert.deepEqual(voicePlan(state,'naruto-device',7),plan);sources.add(plan.src);
+  const data=readFileSync(new URL('../preview/'+plan.src,import.meta.url));assert.equal(data.subarray(0,4).toString(),'RIFF');
+ }
+ assert.equal(sources.size,5);
+ for(const state of ['idle','interrupted','disconnected'])assert.equal(voicePlan(state,'naruto-device').src,'');
 });

@@ -87,7 +87,7 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.1-s3r-echo\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.2-s3r-naruto\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
                 M5.Speaker.isEnabled()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }

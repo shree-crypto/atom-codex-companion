@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const sound=new SoundPreview(),face=new Animator('idle',0);
 sound.onError=message=>{$('audio-status').textContent=message;};
 for(const style of voiceStyles){const option=document.createElement('option');option.value=style.id;option.textContent=style.label;$('voice-style').append(option);}
-sound.setStyle('naruto');$('voice-style').value='naruto';
+sound.setStyle('naruto-device');$('voice-style').value='naruto-device';
 sound.onClip=plan=>{
   $('playing-phrase').textContent=plan.text;
   $('clip-source').hidden=!plan.source;
@@ -12,12 +12,15 @@ sound.onClip=plan=>{
 };
 function syncPhrases(){
   const options=voiceOptions(face.id,sound.style);
-  $('phrase').replaceChildren(new Option('Rotate through phrases','auto'),...options.map((p,i)=>new Option(p.text,String(i))));
+  const fixed=voiceStyles.find(s=>s.id===sound.style)?.fixed;
+  const selected=voicePlan(face.id,sound.style);
+  $('phrase').replaceChildren(new Option(fixed?'Fixed per state':'Rotate through phrases','auto'),...options.map((p,i)=>new Option(p.text,String(i))));
   $('phrase').disabled=!options.length;
   $('next-phrase').disabled=!options.length;
   sound.variation=null;
-  $('playing-phrase').textContent=options.length?options.length+' character clips available for this state.':'';
-  $('clip-source').hidden=true;
+  $('playing-phrase').textContent=fixed?selected.text:options.length?options.length+' character clips available for this state.':'';
+  $('clip-source').hidden=!(fixed&&selected.source);
+  if(fixed&&selected.source)$('clip-source').href=selected.source;
 }
 $('phrase').addEventListener('change',async()=>{
   sound.variation=$('phrase').value==='auto'?null:Number($('phrase').value);

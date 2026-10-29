@@ -170,4 +170,26 @@ Send only the desired COLOR line. The selected colour persists across restart. I
 
 The browser preview has Naruto (9 clips), Jujutsu Kaisen (10 clips), and My Hero Academia (5 clips) packs. Select a pack, choose an expression, and enable sound. The Phrase selector lets you audition any line in that pack. Rotate through phrases changes the line each time, including repeated alerts; Try another phrase plays one sample. Sound off cancels playback and pending repeats.
 
-Anime samples stream from their original community soundboard host and need an internet connection. Open original soundboard clip shows the source of the current recording. These references are for auditioning; the flashed device still uses the bundled Cute recordings. Choose favourites in the preview before changing the hardware's voice set.
+Anime samples stream from their original community soundboard host and need an internet connection. Open original soundboard clip shows the source of the current recording. These references are for auditioning; the flashed firmware now uses the fixed Naruto crew set described below.
+
+## Fixed Naruto crew on the M5
+
+Firmware 2.2 uses one fixed dialogue clip for each audible alert state, with no random selection:
+
+- Working: Shikamaru — “Sounds like a drag.”
+- Needs input: Hinata — “Naruto-kun!”
+- New message: Kakashi — “Nani?!”
+- Finished: Naruto — “Believe it!”
+- Error/blocked: Killer Bee — “Bakayaro, konoyaro!”
+
+Idle, paused and disconnected retain their quiet faces. Working plays once; message and completion repeat three times. Input/error cues repeat after the recording finishes and a three-second gap until acknowledged or the state changes. Short-press the display to silence a cue; long-press to mute persistently. A press never approves a Codex action.
+
+Select **Naruto crew · M5 fixed set** in the browser to audition the same files. The WAVs are bundled in `preview/voices/naruto-device/`: 16 kHz, mono, 16-bit PCM. They play without Wi-Fi or an online speech service on the M5. Original community soundboard links and processed-file SHA-256 hashes are in `expressions/device_voice_pack.json`; anime dialogue is third-party material, separate from the CC0 packs.
+
+To regenerate the firmware audio header and matching browser metadata after editing those WAVs and their manifest:
+
+```text
+python expressions/generate_device_audio.py
+```
+
+Then follow the Arduino build/upload instructions above. The generator checks each file's hash and WAV format before embedding it.

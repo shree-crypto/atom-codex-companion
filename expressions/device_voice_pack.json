@@ -1,0 +1,51 @@
+{
+  "name": "Naruto crew",
+  "sample_rate": 16000,
+  "states": {
+    "working": {
+      "character": "Shikamaru",
+      "phrase": "Sounds like a drag",
+      "src": "https://www.myinstants.com/media/sounds/tmp7kqrj0cu.mp3",
+      "source": "https://www.myinstants.com/en/instant/shikamaru-sounds-like-a-drag-1/",
+      "duration": 1.928,
+      "file": "naruto-device/working.wav",
+      "sha256": "5b10f5db67dee1f964b4cfc2202d5ac5a29d385d3edac3b4b2f750863caa3c9c"
+    },
+    "needs_input": {
+      "character": "Hinata",
+      "phrase": "Naruto-kun!",
+      "src": "https://sounds.myinstantplay.com/il/hinata-naruto-kun.mp3",
+      "source": "https://myinstantplay.com/sound/hinata-naruto-kun",
+      "duration": 1.441,
+      "file": "naruto-device/needs_input.wav",
+      "sha256": "a926ebf944b32bb284b868290945da59173786ac8c43bdaac708461a50d6f44a"
+    },
+    "message": {
+      "character": "Kakashi",
+      "phrase": "Nani?!",
+      "src": "https://www.myinstants.com/media/sounds/m_fixed_68.mp3",
+      "source": "https://www.myinstants.com/en/instant/kakashi-nani/",
+      "duration": 2.456,
+      "file": "naruto-device/message.wav",
+      "sha256": "e74f9a0bad4073da0a65ad4beda9a1b4d9524f2f5693a45a1807a481a081a662"
+    },
+    "finished": {
+      "character": "Naruto",
+      "phrase": "Believe it!",
+      "src": "https://sounds.myinstantplay.com/ng/narutou002dbelieve-it.mp3",
+      "source": "https://myinstantplay.com/sound/narutou002dbelieve-it",
+      "duration": 2.753,
+      "file": "naruto-device/finished.wav",
+      "sha256": "b7bcb0942da189fba30f70488337e6597db73742a76aa85a370c6ae51adfd3d8"
+    },
+    "error": {
+      "character": "Killer Bee",
+      "phrase": "Bakayaro, konoyaro!",
+      "src": "https://www.myinstants.com/media/sounds/bakayaro_konoyaro.mp3",
+      "source": "https://www.myinstants.com/en/instant/bakayaro-konoyaro-killerb-91562/",
+      "duration": 5.487,
+      "file": "naruto-device/error.wav",
+      "sha256": "291798ef23d6de1c14b1e29d232dc0fe022ae440d7ed8afbece555cb0ebc367a"
+    }
+  }
+}

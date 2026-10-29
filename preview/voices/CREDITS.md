@@ -1,6 +1,18 @@
+# Fixed Naruto crew device pack
+
+The user-selected device pack in `naruto-device/` contains five short dialogue samples, converted to 16 kHz mono PCM and balanced to -19 LUFS with a -3 dB true-peak target. They are third-party anime dialogue, **not CC0**. Community upload labels identify the characters; original source links, file hashes and durations are recorded in `expressions/device_voice_pack.json` and the generated `preview/device-voices.mjs`.
+
+- Working — Shikamaru: https://www.myinstants.com/en/instant/shikamaru-sounds-like-a-drag-1/
+- Needs input — Hinata: https://myinstantplay.com/sound/hinata-naruto-kun
+- New message — Kakashi: https://www.myinstants.com/en/instant/kakashi-nani/
+- Finished — Naruto: https://myinstantplay.com/sound/narutou002dbelieve-it
+- Error — Killer Bee: https://www.myinstants.com/en/instant/bakayaro-konoyaro-killerb-91562/
+
+The firmware embeds these five clips locally. Existing broader anime audition packs remain online references.
+
 # Online anime samples
 
-The Naruto, Jujutsu Kaisen and My Hero Academia preview packs use 24 community soundboard references listed in `preview/anime.mjs`. Each entry links to its original page at https://myinstantplay.com/. Playback streams from that host. Anime recordings are not included in this repository, source ZIP, CC0 voice ZIP, or device firmware, and are not covered by the CC0 licenses below. Character labels come from community uploads; recordings can contain edits or background audio. The source link beside the playing phrase opens its original page.
+The Naruto, Jujutsu Kaisen and My Hero Academia preview packs use 24 community soundboard references listed in `preview/anime.mjs`. Each entry links to its original page at https://myinstantplay.com/. Playback streams from that host. Anime recordings are not included in this repository, source ZIP, CC0 voice ZIP, and are not covered by the CC0 licenses below. Character labels come from community uploads; recordings can contain edits or background audio. The source link beside the playing phrase opens its original page.
 
 # Recorded voice credits
 

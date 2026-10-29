@@ -1,6 +1,8 @@
 import definitions from './definitions.mjs';
 import {animeClips} from './anime.mjs';
+import {deviceVoicePack} from './device-voices.mjs';
 export const voiceStyles=[
+  {id:'naruto-device',label:'Naruto crew · M5 fixed set',fixed:true,folder:'naruto-device',rate:1},
   {id:'naruto',label:'Naruto · character lines',online:true,rate:1},
   {id:'jjk',label:'Jujutsu Kaisen · character lines',online:true,rate:1},
   {id:'mha',label:'My Hero Academia · character lines',online:true,rate:1},
@@ -22,6 +24,11 @@ export function voiceOptions(id,style){
 export function voicePlan(id,style='cute',variation=0){
   if(!definitions.states.some(s=>s.id===id))throw new RangeError('Unknown expression');
   const profile=voiceStyles.find(s=>s.id===style);if(!profile)throw new RangeError('Unknown voice style');
+  if(profile.fixed){
+    const clip=deviceVoicePack.states[id];
+    return {text:clip?clip.character+' — '+clip.phrase:'',src:clip?'voices/'+clip.file:'',source:clip?.source||'',rate:1,
+      repeats:id==='needs_input'||id==='error'?Infinity:id==='working'?1:3};
+  }
   const options=voiceOptions(id,style);
   if(profile.online){
     const clip=options[((variation%options.length)+options.length)%options.length];
