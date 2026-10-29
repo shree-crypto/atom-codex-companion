@@ -60,7 +60,7 @@ def guide_html(markdown):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    for name in ['index.html', 'style.css', 'app.mjs', 'audio.mjs', 'face.mjs', 'definitions.mjs']:
+    for name in ['index.html', 'style.css', 'app.mjs', 'audio.mjs', 'anime.mjs', 'face.mjs', 'definitions.mjs']:
         shutil.copyfile(ROOT / 'preview' / name, DIST / name)
     shutil.copytree(ROOT / 'preview/voices', DIST / 'voices', dirs_exist_ok=True)
     patterns = ['README.md', 'GETTING_STARTED.md', 'requirements*.txt',

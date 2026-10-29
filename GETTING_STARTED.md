@@ -165,3 +165,9 @@ STATUS
 ```
 
 Send only the desired COLOR line. The selected colour persists across restart. Invalid names are rejected without changing the colour. Close the laptop companion before using a serial terminal, and close the terminal before restarting the companion. Colour changes do not acknowledge or approve a Codex request.
+
+## Audition anime character lines
+
+The browser preview has Naruto (9 clips), Jujutsu Kaisen (10 clips), and My Hero Academia (5 clips) packs. Select a pack, choose an expression, and enable sound. The Phrase selector lets you audition any line in that pack. Rotate through phrases changes the line each time, including repeated alerts; Try another phrase plays one sample. Sound off cancels playback and pending repeats.
+
+Anime samples stream from their original community soundboard host and need an internet connection. Open original soundboard clip shows the source of the current recording. These references are for auditioning; the flashed device still uses the bundled Cute recordings. Choose favourites in the preview before changing the hardware's voice set.

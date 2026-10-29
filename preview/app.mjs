@@ -1,9 +1,31 @@
 import {Animator,sample,svg,definitions} from './face.mjs';
-import {SoundPreview,voicePlan,voiceStyles} from './audio.mjs';
+import {SoundPreview,voicePlan,voiceStyles,voiceOptions} from './audio.mjs';
 const $=id=>document.getElementById(id);
 const sound=new SoundPreview(),face=new Animator('idle',0);
 sound.onError=message=>{$('audio-status').textContent=message;};
 for(const style of voiceStyles){const option=document.createElement('option');option.value=style.id;option.textContent=style.label;$('voice-style').append(option);}
+sound.setStyle('naruto');$('voice-style').value='naruto';
+sound.onClip=plan=>{
+  $('playing-phrase').textContent=plan.text;
+  $('clip-source').hidden=!plan.source;
+  if(plan.source)$('clip-source').href=plan.source;
+};
+function syncPhrases(){
+  const options=voiceOptions(face.id,sound.style);
+  $('phrase').replaceChildren(new Option('Rotate through phrases','auto'),...options.map((p,i)=>new Option(p.text,String(i))));
+  $('phrase').disabled=!options.length;
+  $('next-phrase').disabled=!options.length;
+  sound.variation=null;
+  $('playing-phrase').textContent=options.length?options.length+' character clips available for this state.':'';
+  $('clip-source').hidden=true;
+}
+$('phrase').addEventListener('change',async()=>{
+  sound.variation=$('phrase').value==='auto'?null:Number($('phrase').value);
+  try{await sound.enable();sound.play(face.id,{once:true});syncSound();}catch(error){$('audio-status').textContent=error.message;}
+});
+$('next-phrase').addEventListener('click',async()=>{
+  try{await sound.enable();sound.variation=null;$('phrase').value='auto';sound.play(face.id,{once:true});syncSound();}catch(error){$('audio-status').textContent=error.message;}
+});
 let now=0,previous=performance.now(),paused=false,demo=false,demoIndex=0,demoAt=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
 const states=new Map(definitions.states.map(s=>[s.id,s]));
@@ -27,6 +49,7 @@ function choose(id,play=true){
   face.setState(id,now,{immediate:paused||$('reduced').checked,restart:true});
   const state=states.get(id);$('current-name').textContent=state.label;$('description').textContent=state.description;
   for(const button of $('states').children)button.setAttribute('aria-pressed',String(button.dataset.id===id));
+  syncPhrases();
   const cue=voicePlan(id,sound.style);$('cue-description').textContent=cue.text?cue.text+' · '+(cue.repeats===Infinity?'repeats until state changes or muted':cue.repeats===1?'plays once':'repeats 3 times'):'This state stays quiet.';
   if(play)sound.play(id);syncSound();draw();
 }

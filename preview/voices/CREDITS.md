@@ -1,3 +1,7 @@
+# Online anime samples
+
+The Naruto, Jujutsu Kaisen and My Hero Academia preview packs use 24 community soundboard references listed in `preview/anime.mjs`. Each entry links to its original page at https://myinstantplay.com/. Playback streams from that host. Anime recordings are not included in this repository, source ZIP, CC0 voice ZIP, or device firmware, and are not covered by the CC0 licenses below. Character labels come from community uploads; recordings can contain edits or background audio. The source link beside the playing phrase opens its original page.
+
 # Recorded voice credits
 
 All bundled recordings are free CC0 assets, downloaded on 2026-10-29. They are stored with the preview; playback does not contact an external audio host or speech service.

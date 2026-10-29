@@ -14,8 +14,8 @@ test('starts disabled; quiet states have no recording',()=>{
  for(const id of ['idle','interrupted','disconnected'])assert.equal(voicePlan(id).src,'');
 });
 test('five styles map every voiced state to a bundled WAV or OGG',()=>{
- assert.equal(voiceStyles.length,5);
- for(const style of voiceStyles)for(const id of ['working','needs_input','message','finished','error']){
+ assert.equal(voiceStyles.filter(s=>!s.online).length,5);
+ for(const style of voiceStyles.filter(s=>!s.online))for(const id of ['working','needs_input','message','finished','error']){
   const plan=voicePlan(id,style.id),data=readFileSync(new URL('../preview/'+plan.src,import.meta.url));
   assert.ok(['RIFF','OggS'].includes(data.subarray(0,4).toString()));assert.ok(data.length>100);
  }
@@ -60,4 +60,21 @@ test('rejected playback stops and surfaces a useful error',async t=>{
  sound.play('needs_input');players[0].play=()=>Promise.reject(new Error('blocked'));
  players[0].onended();t.mock.timers.tick(3000);await Promise.resolve();
  assert.equal(reported,true);assert.equal(sound.player,null);assert.equal(sound.timer,null);
+});
+
+
+test('anime packs provide distinct online variations and preserve source links',()=>{
+ for(const style of voiceStyles.filter(s=>s.online)){
+  const seen=new Set();
+  for(let i=0;i<3;i++){const p=voicePlan('needs_input',style.id,i);assert.match(p.src,/^https:\/\/sounds\.myinstantplay\.com\//);assert.match(p.source,/^https:/);seen.add(p.src);}
+  assert.equal(seen.size,3);
+  assert.equal(voicePlan('idle',style.id).src,'');
+ }
+});
+test('automatic anime rotation changes repeated lines; explicit choice stays fixed',t=>{
+ const {sound,players}=harness(t);sound.setStyle('naruto');sound.play('needs_input');
+ const first=players[0].src;players[0].onended();t.mock.timers.tick(3000);assert.notEqual(players[0].src,first);
+ sound.stop();sound.variation=1;sound.play('needs_input');const chosen=players[1].src;
+ players[1].onended();t.mock.timers.tick(3000);assert.equal(players[1].src,chosen);
+ sound.mute();t.mock.timers.tick(3000);assert.equal(sound.player,null);
 });
