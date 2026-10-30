@@ -1,3 +1,4 @@
+import definitions from './definitions.mjs';
 // Vector faces for the 128px expression preview; no downloaded wallpaper assets.
 export const pokemonThemes=Object.freeze([
  {id:'pikachu',name:'Pikachu',bg:'#ffda32',iris:'#272526',cheeks:true},
@@ -10,7 +11,7 @@ export const pokemonThemes=Object.freeze([
  {id:'snorlax',name:'Snorlax',bg:'#217b7d',iris:'#3c3432',sleepy:true,fangs:true}
 ]);
 const themes=new Map(pokemonThemes.map(t=>[t.id,t]));
-const states=new Set(['idle','working','needs_input','finished','error','paused','disconnected']);
+const states=new Set(definitions.states.filter(s=>s.id!=='message').map(s=>s.id));
 const n=x=>Number(x.toFixed(3));
 export function pokemonFrame(state,time,{reduced=false}={}){
  if(!states.has(state))throw new RangeError('Unknown Pokemon expression');
@@ -20,7 +21,7 @@ export function pokemonFrame(state,time,{reduced=false}={}){
  return {state,gaze:reduced?0:state==='working'?3.2*Math.sin(phase*1.8):1.1*Math.sin(phase*.65),
   bob:reduced?0:(state==='finished'?1.5:.7)*Math.sin(phase*(state==='working'?2.2:1.5)),
   blink:state==='needs_input'?1:blink,question:reduced?0:1.5*Math.sin(phase*3),
-  phase,wide:state==='needs_input'?1.14:state==='paused'?.55:1};
+  phase,wide:state==='needs_input'?1.14:state==='interrupted'?.55:1};
 }
 function ornaments(t){
  return (t.cheeks?'<circle cx="20" cy="79" r="9" fill="#ed4c49"/><circle cx="108" cy="79" r="9" fill="#ed4c49"/>':'')+
@@ -62,7 +63,7 @@ export function renderPokemon(container,id,state,time,options={}){
  visible('[data-fangs]',t.fangs&&open);visible('[data-brows]',state==='error');
  visible('[data-question]',state==='needs_input');q('[data-question]').setAttribute('transform',`translate(0 ${n(f.question)})`);
  visible('[data-work]',state==='working');for(let i=0;i<3;i++)q(`[data-dot="${i}"]`).setAttribute('r',n(1.8+.8*Math.sin(f.phase*3-i)));
- visible('[data-sleep]',state==='paused');visible('[data-mute]',!!options.muted);
+ visible('[data-sleep]',state==='interrupted');visible('[data-mute]',!!options.muted);
  // Happy closed eyes: retain DOM nodes so animation never rebuilds the SVG per frame.
  for(const e of container.querySelectorAll('[data-eye]')){
   for(const child of e.children)child.setAttribute('visibility',child.hasAttribute('data-happy')?(state==='finished'?'visible':'hidden'):(state==='finished'?'hidden':'visible'));

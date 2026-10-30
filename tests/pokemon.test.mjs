@@ -1,10 +1,11 @@
+import definitions from '../preview/definitions.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {pokemonThemes,pokemonSvg,pokemonFrame} from '../preview/pokemon.mjs';
 test('eight distinct faces render all active states at 128px',()=>{
  assert.equal(new Set(pokemonThemes.map(t=>t.id)).size,8);
- for(const t of pokemonThemes)for(const state of ['idle','working','needs_input','finished','error','paused','disconnected']){
-  const s=pokemonSvg(t.id,state);assert.ok(s.includes('viewBox="0 0 128 128"'));assert.ok(s.includes(t.name));assert.ok(/data-mouth d="M/.test(s));assert.ok(!/undefined|NaN/.test(s));
+ for(const t of pokemonThemes)for(const {id:state} of definitions.states.filter(s=>s.id!=='message')){
+  const s=pokemonSvg(t.id,state);assert.ok(Number.isFinite(pokemonFrame(state,100).gaze));assert.ok(s.includes('viewBox="0 0 128 128"'));assert.ok(s.includes(t.name));assert.ok(/data-mouth d="M/.test(s));assert.ok(!/undefined|NaN/.test(s));
  }
 });
 test('working moves continuously; reduced motion is deterministic',()=>{
