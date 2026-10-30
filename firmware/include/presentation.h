@@ -7,7 +7,7 @@ class Presentation {
     M5Canvas canvas{&M5.Display};
     bool buffered=false;
     uint16_t eyeColor=0;
-    const char* colorName="blue";
+    const char* colorName="orange";
     uint32_t frames=0, longestFrame=0;
     State current=State::Disconnected;
     bool muted=false;

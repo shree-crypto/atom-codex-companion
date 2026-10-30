@@ -31,8 +31,9 @@ $('next-phrase').addEventListener('click',async()=>{
 });
 let now=0,previous=performance.now(),paused=false,demo=false,demoIndex=0,demoAt=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
-const states=new Map(definitions.states.map(s=>[s.id,s]));
-for(const s of definitions.states){
+const activeStates=definitions.states.filter(state=>state.id!=='message');
+const states=new Map(activeStates.map(s=>[s.id,s]));
+for(const s of activeStates){
   const button=document.createElement('button');button.className='state';button.dataset.id=s.id;
   button.setAttribute('aria-pressed',String(s.id==='idle'));
   const mini=document.createElement('span');mini.className='mini';mini.setAttribute('aria-hidden','true');mini.innerHTML=svg(sample(s.id,0,{reduced:true}));
@@ -82,7 +83,7 @@ $('reduced').addEventListener('change',draw);
 reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
 $('demo').addEventListener('click',async()=>{
   try{await sound.enable();syncSound();paused=false;$('pause').textContent='Pause animation';$('pause').setAttribute('aria-pressed','false');
-    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo running...';choose(definitions.states[0].id);
+    demo=true;demoIndex=0;demoAt=now;$('stop-demo').disabled=false;$('demo').textContent='Demo running...';choose(activeStates[0].id);
     $('audio-status').textContent='Demo: each state runs for 10 seconds, with its matching sound.';
   }catch(error){$('audio-status').textContent=error.message;}
 });
@@ -93,7 +94,7 @@ function tick(time){
   if(!paused&&!document.hidden)now+=delta;
   if(demo&&!paused&&now-demoAt>=10000){
     demoAt=now;demoIndex++;
-    if(demoIndex>=definitions.states.length){stopDemo();choose('idle',false);}else choose(definitions.states[demoIndex].id);
+    if(demoIndex>=activeStates.length){stopDemo();choose('idle',false);}else choose(activeStates[demoIndex].id);
   }
   if(!document.hidden&&!paused)draw();
   requestAnimationFrame(tick);

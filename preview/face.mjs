@@ -75,7 +75,7 @@ function iconShape(icon){
   return '';
 }
 export const eyeColors=Object.freeze({blue:'#397dcc',green:'#2eab79',orange:'#ed8b35'});
-export function svg(frame,{size=128,muted=false,color='blue'}={}){
+export function svg(frame,{size=128,muted=false,color='orange'}={}){
   const p={...definitions.palette,eye:eyeColors[color]??eyeColors.blue};
   const eyes=frame.eyes.map(e=>`<path d="${eyePath(e)}"/>`).join('');
   const mouth=`<path d="M57 92q7 8 14 0" opacity="${n(frame.mouth)}" fill="none" stroke="${p.eye}" stroke-width="2.4" stroke-linecap="round"/>`;

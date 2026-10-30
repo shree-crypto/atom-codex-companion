@@ -14,11 +14,11 @@ class RolloutTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.path=Path(self.temp.name)/'rollout-2026-10-30T00-00-00-11111111-1111-1111-1111-111111111111.jsonl'
         self.path.touch();self.cursor=Cursor(self.path)
-    def test_real_lifecycle_and_message_without_content_leaking(self):
+    def test_real_lifecycle_ignores_progress_without_content_leaking(self):
         events=self.cursor.parse(record('task_started',turn_id='t'))
         events+=self.cursor.parse(record('item_completed',turn_id='t',item=dict(type='AgentMessage',phase='commentary',content='secret prompt')))
         events+=self.cursor.parse(record('task_complete',turn_id='t',last_agent_message='secret output'))
-        self.assertEqual([e['kind'] for e in events],['start','message','finished'])
+        self.assertEqual([e['kind'] for e in events],['start','finished'])
         self.assertNotIn('secret',json.dumps(events))
     def test_pending_async_question_survives_stop_and_tool_activity(self):
         self.cursor.parse(record('task_started',turn_id='t'))
@@ -37,10 +37,10 @@ class RolloutTests(unittest.TestCase):
     def test_final_message_is_not_an_incoming_message(self):
         self.cursor.parse(record('task_started',turn_id='t'))
         self.assertEqual(self.cursor.parse(record('item_completed',turn_id='t',item=dict(type='AgentMessage',phase='final'))),[])
-    def test_child_completion_is_only_message(self):
+    def test_child_updates_do_not_interrupt_working(self):
         self.cursor.parse(record('task_started',turn_id='t'))
         events=self.cursor.parse(record('item_completed',turn_id='t',item=dict(type='SubAgentActivity',kind='completed')))
-        self.assertEqual(events[0]['kind'],'message')
+        self.assertEqual(events,[])
     def test_partial_lines_wait_and_oversize_records_do_not_poison_next_event(self):
         raw=json.dumps(record('task_started',turn_id='t')).encode()
         self.path.write_bytes(raw[:12]);self.assertEqual(self.cursor.read(),[])

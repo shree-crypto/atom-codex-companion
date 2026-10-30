@@ -86,9 +86,9 @@ class Cursor:
                 item = payload['item']
                 item_type = item.get('type')
                 if item_type == 'AgentMessage' and item.get('phase') == 'commentary':
-                    return self.event('message', turn=explicit)
-                if item_type == 'SubAgentActivity' and item.get('kind') in ('interacted', 'completed'):
-                    return self.event('message', turn=explicit)
+                    return []  # Progress updates keep the current working state and music.
+                if item_type == 'SubAgentActivity':
+                    return []  # No separate incoming-message alert.
                 if item_type in ('CommandExecution', 'McpToolCall', 'FileChange'):
                     return self.event('activity', turn=explicit)
         if outer == 'response_item':

@@ -9,8 +9,8 @@ Presentation presentation;
 Preferences settings;
 char line[513]{};
 size_t used=0;
-bool dropping=false, longPress=false;
-uint32_t pressedAt=0, readyAt=0;
+bool dropping=false;
+uint32_t readyAt=0;
 
 // Local, explicitly requested diagnostic: keep raw microphone samples in RAM only.
 void microphoneTest() {
@@ -52,7 +52,7 @@ void setup() {
     Serial.begin(115200);
     settings.begin("atom-avatar",false);
     presentation.begin(settings.getBool("muted",false));
-    presentation.setColor(settings.getString("color","blue").c_str());
+    presentation.setColor(settings.getString("color","orange").c_str());
 }
 
 void loop() {
@@ -87,20 +87,14 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.6-s3r-lofi\",\"audio\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
-                M5.Speaker.isEnabled()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.7-s3r-lofi-mute\",\"audio\":%s,\"muted\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+                M5.Speaker.isEnabled()?"true":"false",presentation.isMuted()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }
-    if (M5.BtnA.wasPressed()) { pressedAt=now; longPress=false; }
-    if (M5.BtnA.isPressed() && !longPress && uint32_t(now-pressedAt)>=900) {
-        longPress=true;
+    if (M5.BtnA.wasPressed()) {
         presentation.mute(!presentation.isMuted());
         settings.putBool("muted",presentation.isMuted());
-    }
-    if (M5.BtnA.wasReleased() && !longPress) {
-        Serial.printf("{\"v\":1,\"kind\":\"ack\",\"epoch\":\"%s\",\"seq\":%lu}\n",receiver.epoch(),static_cast<unsigned long>(receiver.seq()));
-        // Silence locally even if the host is momentarily absent.
-        presentation.acknowledge();
+        Serial.printf("{\"v\":1,\"kind\":\"mute\",\"muted\":%s}\n",presentation.isMuted()?"true":"false");
     }
     presentation.tick(now);
     delay(1);

@@ -41,10 +41,9 @@ If automatic reset cannot enter download mode, follow [M5Stack's S3R upload inst
 ## Device behavior
 
 - Working has continuously moving eyes and an activity trail.
-- Needs you pulses; New message has a bouncing envelope.
-- The original 66 BPM lo-fi working loop and fixed Hinata, Kakashi, Naruto and Killer Bee alert recordings are embedded in flash. Input/error calls repeat while active; message/completion repeat three times. No cloud speech service is used.
-- Short press acknowledges the local alert. It never approves an operation in Codex.
-- Long press toggles persisted mute.
+- Needs you pulses; routine new-message alerts are disabled.
+- The original 66 BPM lo-fi working loop and fixed Hinata, Naruto and Killer Bee alert recordings are embedded in flash. Input/error calls repeat while active; completion repeats three times. No cloud speech service is used.
+- Each screen-button press toggles global mute for all audio, saved across states and reboots. Holding toggles once. Unmuting resumes the current sound. It never approves an operation in Codex.
 - The microphone is not continuously recording. Speaker and microphone use the shared audio hardware at different times.
 - Without companion heartbeats, the device shows Disconnected after five seconds. Start the companion on the actual port to keep it connected.
 

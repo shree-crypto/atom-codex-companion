@@ -27,7 +27,7 @@ link=serial.Serial(port=None,baudrate=115200,timeout=.2)
 link.dtr=False;link.rts=False;link.port=args.port
 with link:
     ready=read_kind(link,'ready')
-    assert ready.get('device')=='atom-companion' and ready.get('firmware')=='2.6-s3r-lofi',ready
+    assert ready.get('device')=='atom-companion' and ready.get('firmware')=='2.7-s3r-lofi-mute',ready
     assert ready.get('audio') is True, 'Echo Base speaker did not initialize'
     assert ready.get('psram_bytes',0)>=8*1024*1024, 'S3R PSRAM profile did not initialize'
     result['ready']=ready
@@ -38,7 +38,7 @@ with link:
     result['microphone']=mic
     epoch=secrets.token_hex(12)
     result['states']=[]
-    for seq,state in enumerate(['idle','working','needs_input','message','finished'],1):
+    for seq,state in enumerate(['idle','working','needs_input','finished'],1):
         payload=dict(v=1,epoch=epoch,seq=seq,state=state,session='hardwarecheck',notify=state!='idle')
         frame=(json.dumps(payload)+'\n').encode()
         link.write(frame);link.flush();time.sleep(.1)

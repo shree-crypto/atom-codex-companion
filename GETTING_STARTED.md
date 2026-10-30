@@ -8,7 +8,7 @@ V1 is stationary: orange Classic bezel, black body, pressable colour face and so
 - `classic-enclosure-models.zip`: body, Classic bezel, rear keeper and fit coupons in STL; main parts also in STEP and 3MF.
 - `atom-s3r-echo-firmware.bin`: AtomS3R + Echo Base application image, provided for reference. It is not a complete flash bundle; use the source build/upload route below, which supplies the bootloader and partition images too.
 
-The website offers five recorded voice styles. The S3R + Echo Base firmware embeds the default Cute recordings and updated Working, Needs you and New message visuals. Hardware build/flash results are recorded separately; physical print fit and subjective sound/display quality require confirmation. Browser voice selection does not remotely configure the device.
+The website offers five recorded voice styles. The S3R + Echo Base firmware embeds the fixed Naruto alert recordings, orange eyes and smooth Working/Needs you visuals. Hardware build/flash results are recorded separately; physical print fit and subjective sound/display quality require confirmation. Browser voice selection does not remotely configure the device.
 
 ## 2. Check the hardware
 
@@ -111,7 +111,7 @@ In a second terminal, in the same folder, run these one at a time. On macOS repl
 .venv\Scripts\python.exe -m companion.main --emit finished
 ```
 
-Check the display and speaker. Short press acknowledges the local alert; long press toggles persisted mute. Acknowledging the robot never approves a Codex operation. These manual events verify the connection, not automatic Codex integration.
+Check the display and speaker. Each screen-button press toggles global mute, saved across states and power cycles. Holding the button toggles once. Muting stops every sound; unmuting resumes the current sound. This never approves a Codex operation. These manual events verify the connection, not automatic Codex integration.
 
 ## 8. Connect Codex automatically
 
@@ -124,7 +124,7 @@ $codexExe = (Get-ChildItem "$env:APPDATA\npm\node_modules\@openai\codex" -Recurs
 
 Substitute your device's actual port and installed native Codex executable. The installer starts a hidden background companion, adds the current user's Windows sign-in startup entry, preserves existing hooks, and registers five silent native hooks through Codex's own configuration API. The generated token stays in a restricted local file. Re-running setup preserves its token and avoids duplicate hooks or background instances.
 
-The companion follows new structured lifecycle records in this user's local `~/.codex/sessions` directory: turn starts/tools show Working, assistant progress messages show New message briefly, structured user-input tools show Needs you, answers clear their matching request, and completed turns show Finished when no higher-priority work or input remains. It observes all local chats by default. Historical alerts are not replayed on startup. Remote/cloud-only chats or another CODEX_HOME are not included automatically.
+The companion follows new structured lifecycle records in this user's local `~/.codex/sessions` directory: turn starts/tools show Working, progress and child-agent messages leave Working uninterrupted, structured user-input tools show Needs you, answers clear their matching request, and completed turns show Finished when no higher-priority work or input remains. It observes all local chats by default. Historical alerts are not replayed on startup. Remote/cloud-only chats or another CODEX_HOME are not included automatically.
 
 Native UserPromptSubmit, PreToolUse, Stop, PermissionRequest and PostToolUse hooks cover starts, activity, completion and permission waiting/resolution. The structured record observer fills in new messages and explicit question/answer events and provides immediate compatibility for already-running chats. Their exact observer definitions are reviewed and trusted through the installed Codex API; unrelated hooks are preserved. If your Codex installation lacks that API, use `/hooks` to review only the observer commands. Already-running Codex sessions may need a new session before newly added native hooks load; the local lifecycle observer works immediately. Dismissed approval dialogs without a matching tool-resolution event remain an unverified edge case.
 
@@ -193,17 +193,16 @@ Anime samples stream from their original community soundboard host and need an i
 
 ## Fixed Naruto crew on the M5
 
-Firmware 2.6 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
+Firmware 2.7 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
 
 - Working: quiet slow lo-fi music, looped locally until the state changes or you mute it.
 - Needs input: Hinata — “Naruto-kun!”
-- New message: Kakashi — “Nani?!”
 - Finished: Naruto — “Believe it!”
 - Error/blocked: Killer Bee — “Bakayaro, konoyaro!”
 
-Idle, paused and disconnected retain their quiet faces. Working ambience loops continuously; message and completion repeat three times. Input/error cues repeat after the recording finishes and a three-second gap until acknowledged or the state changes. Short-press the display to silence a cue; long-press to mute persistently. A press never approves a Codex action.
+Idle, paused and disconnected retain their quiet faces. Working ambience loops continuously; completion repeats three times. Input/error cues repeat after the recording finishes and a three-second gap until muted or the state changes. Press the display once to toggle global mute, saved across state changes and reboots. A press never approves a Codex action.
 
-Select **Naruto crew · M5 fixed set** in the browser to audition the same files. The four voice cues and generated music WAV are bundled in `preview/voices/naruto-device/`: 16 kHz, mono, 16-bit PCM. They play without Wi-Fi or an online speech service on the M5. Original community soundboard links and processed-file SHA-256 hashes are in `expressions/device_voice_pack.json`; anime dialogue is third-party material, separate from the CC0 packs.
+Select **Naruto crew · M5 fixed set** in the browser to audition the same files. The three active voice cues, legacy Kakashi clip and generated music WAV are bundled in `preview/voices/naruto-device/`: 16 kHz, mono, 16-bit PCM. They play without Wi-Fi or an online speech service on the M5. Original community soundboard links and processed-file SHA-256 hashes are in `expressions/device_voice_pack.json`; anime dialogue is third-party material, separate from the CC0 packs.
 
 To regenerate the firmware audio header and matching browser metadata after editing those WAVs and their manifest:
 

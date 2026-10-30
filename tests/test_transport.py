@@ -72,3 +72,20 @@ class TransportTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MuteStatusTests(unittest.TestCase):
+    def test_global_mute_status_does_not_acknowledge_current_alert(self):
+        wire = Wire()
+        acknowledged = []
+        link = SerialLink('unused', opener=lambda: wire, acknowledge=lambda: acknowledged.append(True))
+        snap = Snapshot('needs_input', 's', 1, True)
+        link.tick(0, snap)
+        wire.incoming.extend(b'{"v":1,"device":"atom-companion","kind":"ready","muted":true}\n')
+        link.tick(1, snap)
+        self.assertTrue(link.muted)
+        wire.incoming.extend(b'{"v":1,"kind":"mute","muted":false}\n')
+        link.tick(2, snap)
+        self.assertFalse(link.muted)
+        self.assertEqual(acknowledged, [])
+        self.assertEqual(FrameDecoder().feed(b'{"v":1,"kind":"mute","muted":1}\n'), [])

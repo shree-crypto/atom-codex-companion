@@ -58,6 +58,8 @@ class FrameDecoder:
             return False
         if frame.get('kind') == 'ready':
             return frame.get('device') == 'atom-companion'
+        if frame.get('kind') == 'mute':
+            return type(frame.get('muted')) is bool
         if frame.get('kind') == 'ack':
             return (type(frame.get('seq')) is int and 0 <= frame['seq'] <= 0xFFFFFFFF
                     and isinstance(frame.get('epoch'), str) and 0 < len(frame['epoch']) <= 40)
@@ -74,6 +76,7 @@ class SerialLink:
         self.decoder = FrameDecoder()
         self.ready = False
         self.firmware = None
+        self.muted = None
         self.retry_at = 0.0
         self.opened_at = 0.0
         self.sent_at = -1.0
@@ -93,6 +96,7 @@ class SerialLink:
         self.wire = None
         self.ready = False
         self.firmware = None
+        self.muted = None
         self.first_send = True
         self.last_snapshot = None
         self.decoder = FrameDecoder()
@@ -113,6 +117,9 @@ class SerialLink:
                     self.ready = True
                     version=frame.get('firmware')
                     self.firmware=version if isinstance(version,str) and len(version)<=64 else None
+                    if type(frame.get('muted')) is bool:self.muted=frame['muted']
+                elif self.ready and frame.get('kind') == 'mute':
+                    self.muted=frame['muted']
                 elif self.ready and frame.get('kind') == 'ack':
                     if frame['epoch'] == self.epoch and frame['seq'] == snapshot.seq:
                         self.acknowledge()

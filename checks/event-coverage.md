@@ -6,11 +6,11 @@
 | --- | --- | --- |
 | task_started | Working | Live Codex record |
 | completed command/tool/file item | Working underneath temporary messages | Live records and tests |
-| assistant commentary item | New message for 3 seconds | Live record and tests |
+| assistant commentary item | Ignored; Working stays uninterrupted | Live record and tests |
 | request_user_input / request_user_input_async | Needs input keyed by call ID | Live asynchronous question and tests |
 | synchronous tool answer / structured asynchronous answer | Clears only the matching wait | Live answer and tests |
 | task_complete | Finished; outstanding input and other active work retain priority | Live completion records and tests |
-| child-agent interaction/completion item | New message; never finishes the parent | Structured-item tests |
+| child-agent interaction/completion item | Ignored; never finishes the parent | Structured-item tests |
 | turn_aborted | Paused | Parser support; live interruption not qualified |
 | UserPromptSubmit / PreToolUse / Stop hooks | Native start/activity/completion route | Installed and exact definitions trusted |
 | PermissionRequest hook | Needs input; no approval decision | Installed and native API confirms trusted |

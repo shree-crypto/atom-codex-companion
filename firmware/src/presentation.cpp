@@ -9,7 +9,7 @@ void Presentation::begin(bool soundMuted) {
     canvas.setColorDepth(16);
     canvas.setPsram(false);
     buffered=canvas.createSprite(128,128)!=nullptr;
-    setColor("blue");
+    setColor("orange");
     M5.Speaker.setVolume(120);
 }
 
@@ -41,7 +41,13 @@ void Presentation::ambient() {
         M5.Speaker.playWav(VOICE_WORKING,sizeof(VOICE_WORKING),UINT32_MAX,0,true);
 }
 
-void Presentation::mute(bool value) { muted=value; if (value) acknowledge(); else ambient(); }
+void Presentation::mute(bool value) {
+    if (value==muted) return;
+    muted=value;
+    if (value) acknowledge();
+    else if (current==State::Working) ambient();
+    else setState(current,true,millis());
+}
 
 void Presentation::acknowledge() { repeats=0; waitingForVoice=false; M5.Speaker.stop(); }
 
