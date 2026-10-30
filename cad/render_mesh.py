@@ -1,13 +1,13 @@
 """Export the actual CAD tessellation for CPU image rendering; no invented geometry."""
 import json
 from pathlib import Path
-from stationary import assembly, exploded, soft_face, slim_face
+from stationary import assembly, exploded
 from check_geometry import world_parts
 
 HERE = Path(__file__).resolve().parent
 if __name__ == '__main__':
     out=HERE/'review'; out.mkdir(exist_ok=True)
-    for name, function in [('assembled', assembly), ('exploded', exploded), ('soft',soft_face),('slim',slim_face)]:
+    for name, function in [('assembled', assembly), ('exploded', exploded)]:
         meshes=[]
         for shape in world_parts(function().shape):
             vertices, faces=shape.tessellate(0.18)

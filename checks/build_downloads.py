@@ -60,6 +60,8 @@ def guide_html(markdown):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    for name in ('revision-2-front.png','revision-2-assembled.png','revision-2-exploded.png'):
+        shutil.copyfile(ROOT/'assets'/name,DIST/name)
     for name in ['index.html', 'style.css', 'app.mjs', 'audio.mjs', 'anime.mjs', 'device-voices.mjs', 'face.mjs', 'definitions.mjs']:
         shutil.copyfile(ROOT / 'preview' / name, DIST / name)
     shutil.copytree(ROOT / 'preview/voices', DIST / 'voices', dirs_exist_ok=True)
@@ -77,12 +79,14 @@ def main():
     archive(OUT / 'recorded-voice-clips.zip', [(p, p.relative_to(ROOT / 'preview/voices').as_posix()) for p in (ROOT / 'preview/voices').rglob('*') if p.is_file()])
     models = []
     for kind in ['STL', 'STEP', '3MF']:
-        for name in ['body', 'bezel', 'keeper'] + (['fit_coupons'] if kind == 'STL' else []):
+        for name in ['body', 'bezel', 'keeper', 'bezel_print'] + (['fit_coupons'] if kind == 'STL' else []):
             p = ROOT / 'cad' / kind / (name + '.' + kind.lower())
             assert p.is_file() and p.stat().st_size > 0
             models.append((p, kind + '/' + p.name))
     archive(OUT / 'classic-enclosure-models.zip', models + [(ROOT / 'GETTING_STARTED.md', 'GETTING_STARTED.md')])
-    for name in ['body', 'bezel', 'keeper', 'fit_coupons']:
+    bezel_files=[(p,n) for p,n in models if Path(n).stem in ('bezel','bezel_print')]
+    archive(OUT/'bezel-only-update.zip',bezel_files+[(ROOT/'GETTING_STARTED.md','GETTING_STARTED.md')])
+    for name in ['body', 'bezel', 'keeper', 'bezel_print', 'fit_coupons']:
         shutil.copyfile(ROOT / 'cad' / 'STL' / (name + '.stl'), OUT / (name + '.stl'))
     shutil.copyfile(ROOT / 'outputs' / 'atom-s3r-echo-firmware.bin', OUT / 'atom-s3r-echo-firmware.bin')
     shutil.copyfile(ROOT / 'GETTING_STARTED.md', OUT / 'GETTING_STARTED.md')

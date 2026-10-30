@@ -1,12 +1,14 @@
 # AtomS3R + Echo Base Codex companion
 
+Bezel-only revision 2 keeps the already printed body and keeper unchanged. Print only the replacement face: smaller screen-only opening, confirmed 24.2 mm pocket, reinforced latches at the original four positions. USB exits upward; firmware 2.8 rotates the display. Revised latch strength and button clearance still need a physical bezel test.
+
 An M5 Atom desk avatar for Codex activity, with animated eyes, speaker cues and a screwless snap-fit enclosure.
 
 [Live expressions and cute voice](https://atom-expression-lab-shree-1029.plumtrail2049.chatgpt.site) · [Step-by-step build guide](GETTING_STARTED.md) · [Online guide and downloads](https://atom-expression-lab-shree-1029.plumtrail2049.chatgpt.site/setup.html)
 
-![Classic orange enclosure rendered from actual CAD](assets/iteration-06-assembled-orange.png)
+![Classic orange enclosure rendered from actual CAD](assets/revision-2-assembled.png)
 
-The current target is AtomS3R C126 with the Atomic Echo Base A149. Firmware 2.7 combines smooth 60 fps expressions, 66 BPM lo-fi music during Working, and fixed Hinata/Naruto/Killer Bee alerts. The browser's M5 fixed set auditions the same local audio files.
+The current target is AtomS3R C126 with the Atomic Echo Base A149. Firmware 2.8 combines smooth 60 fps expressions, 66 BPM lo-fi music during Working, and fixed Hinata/Naruto/Killer Bee alerts. The browser's M5 fixed set auditions the same local audio files.
 
 Orange eyes are the default. Each screen-button press toggles mute for every sound, saved across state changes and power cycles. Routine new-message alerts are disabled.
 
@@ -46,7 +48,7 @@ The user's colour-screen M5 Atom and reported built-in speaker are the intended 
 - Local Python observer with authenticated loopback ingress and explicit USB port selection.
 - Per-session state priority, request acknowledgement, stale-turn filtering, bounded framing and reconnect without replaying cues.
 - Eight faces: idle, working, needs input, new message, finished turn, error, interrupted and disconnected.
-- Working uses a locally generated lo-fi loop; alert states use the selected Naruto-series dialogue clips. Input/error reactions repeat while active; message/completion repeat three times. Acknowledgement, mute, state changes and disconnection stop playback. The microphone runs only for an explicit local level diagnostic.
+- Working uses a locally generated lo-fi loop; alert states use the selected Naruto-series dialogue clips. Input/error reactions repeat while active; completion repeats three times. Acknowledgement, mute, state changes and disconnection stop playback. The microphone runs only for an explicit local level diagnostic.
 - Short face press acknowledges the displayed alert; it **never approves a Codex operation**. Long press toggles sound mute, saved on the device.
 - Nominal stationary enclosure, fit coupons, assembly and exploded views. Maximum two printed colours; all parts can also use one colour.
 
@@ -105,9 +107,9 @@ Do not flash a different Atom variant with this profile. The AtomS3R + Echo Base
 
 ## Enclosure and images
 
-V1 source: [cad/stationary.py](cad/stationary.py). Nominal overall size: **48 × 42 × 44 mm**. Printed parts: black body/foot, orange bezel, black rear keeper. One-colour printing works without changing geometry. Each part prints separately; a multicolour printer is unnecessary.
+Revision 2 source: [cad/stationary.py](cad/stationary.py). Nominal overall size: **48 × 42 × 44 mm**. Printed parts: original black body/foot and rear keeper, replacement orange bezel (reprint the face only). One-colour printing works without changing geometry. Each part prints separately; a multicolour printer is unnecessary.
 
-Print fit coupons before a full enclosure. Start with 0.2 mm layers and a 0.4 mm nozzle, then adjust fit for the actual machine and material. Do not assume PLA and ABS yield the same snap clearance. The screen aperture must leave the real button free of preload; USB connector and sound grille locations need checking against the exact variant. Snap fits and the board keeper remain prototype retention features until assembled and tested.
+Print fit coupons before a full enclosure. Start with 0.2 mm layers and a 0.4 mm nozzle, then adjust fit for the actual machine and material. Do not assume PLA and ABS yield the same snap clearance. The screen aperture must leave the real button free of preload; USB connector and sound grille locations need checking against the exact variant. Latch retention remains a prototype feature until assembled and tested.
 
 ```powershell
 & "$HOME\.local\bin\cadgen.cmd" +0.8.1 run cad\check_geometry.py

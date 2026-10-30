@@ -5,7 +5,7 @@ V1 is stationary: orange Classic bezel, black body, pressable colour face and so
 ## 1. Pick the right download
 
 - `atom-companion-source.zip`: editable firmware, laptop companion, hook example, expression preview, CAD source, tests and this guide.
-- `classic-enclosure-models.zip`: body, Classic bezel, rear keeper and fit coupons in STL; main parts also in STEP and 3MF.
+- `classic-enclosure-models.zip`: original body/keeper, replacement screen-only bezel and fit coupons in STL; main parts also in STEP and 3MF.
 - `atom-s3r-echo-firmware.bin`: AtomS3R + Echo Base application image, provided for reference. It is not a complete flash bundle; use the source build/upload route below, which supplies the bootloader and partition images too.
 
 The website offers five recorded voice styles. The S3R + Echo Base firmware embeds the fixed Naruto alert recordings, orange eyes and smooth Working/Needs you visuals. Hardware build/flash results are recorded separately; physical print fit and subjective sound/display quality require confirmation. Browser voice selection does not remotely configure the device.
@@ -140,15 +140,33 @@ The observer reads records locally and forwards only state identifiers and hashe
 
 Windows startup can be disabled by removing only `AtomCodexCompanion` from `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Its installation receipt and state-only log are in `%LOCALAPPDATA%\AtomCodexCompanion`. Hook backups are stored there too. Stop the exact companion process before flashing or opening a serial monitor.
 
-## 9. Print a fit coupon, then the enclosure
+## 9. Already printed? Replace only the bezel
 
-Unzip the model pack. Print `STL/fit_coupons.stl` first. Check the board and your printer's fit before committing to the full enclosure. Then print `STL/body.stl`, `STL/bezel.stl` and `STL/keeper.stl`. Start with a 0.4 mm nozzle and 0.2 mm layers; orient flat surfaces on the bed and inspect overhangs in your slicer. Use your printer/material profile for temperatures, cooling, supports and shrinkage.
+Keep your existing body and keeper. The bezel-only revision uses the original four latch positions and the original outer dimensions. **Do not reprint the body.** Download `bezel-only-update.zip` and print one replacement face: `bezel_print.stl` (already oriented on its side) or `bezel.stl` (assembly coordinates, orient in your slicer). These are two orientations of the same part, not two required prints.
 
-PLA is suitable for an initial fit prototype; ABS needs its own fit/shrinkage check. Black body + keeper and orange bezel use two separately printed colours. Nominal assembled size is 48 × 42 × 44 mm. The snap fits, speaker grille, USB opening and keeper have not been physically validated on your exact board.
+Changes on the face only: a 15.8 mm screen opening to cover the white housing; a 24.2 mm device pocket based on the user's best printed fit; four 4.8 mm-wide latch arms with reinforced roots and shallow ramped hooks. The original body/foot and keeper CAD exports are unchanged. The opening is based on the nominal 0.85-inch square display; verify the full active display stays visible and the screen button moves freely.
 
-## 10. Assemble and verify
+Fit coupons are small test rings with 24.2, 24.4 and 24.6 mm openings. They check printer clearance and do not go into the robot. This user already selected 24.2 mm; no need to print the coupons again for this PLA/printer combination. ABS or another printer still needs its own fit check.
 
-Dry-fit the unpowered board in the body, align the screen and USB opening, fit the rear keeper and gently engage the bezel snaps. Do not force a tight fit. Confirm that the pressable screen moves freely without preload and the USB cable seats fully. Connect USB and retest display, press, mute and speaker before treating assembly as complete.
+Start with a 0.4 mm nozzle, 0.2 mm layers and four perimeters, using the printer's validated PLA profile. Use the supplied side-down bezel orientation with removable supports beneath elevated beams/cage walls. This places beam length within the layer plane. Inspect the supports in the slicer, and remove them without bending the arms. Print just the bezel, in orange or black.
+
+For the deformation reported during printing/cooling: start with a 5-8 mm brim, a clean build plate and a well-adhered first layer. Avoid room drafts and let the part cool on the bed before removal. PLA needs appropriate part cooling; a hot closed chamber is not a default remedy. See https://help.prusa3d.com/article/warping_2011 . These steps reduce risk but do not prove a warped original body has recovered. Stop if the old body is distorted enough to force the replacement face.
+
+## 10. What the parts do and how to assemble
+
+- Body: your existing black outer shell and foot. It supports the whole robot. Reuse it unchanged.
+- Bezel: the front frame plus the rear cage/side guides attached to it. It positions the Atom/Echo stack and snaps into the body. This is the only replacement print.
+- Keeper: your existing small U-shaped rear retainer. Its two arms enter the slots at the rear sides of the bezel's cage; its lower crossbar prevents the stack sliding backward, while leaving the central speaker area open. Reuse it.
+- Fit coupons: calibration scraps, not assembly parts.
+
+1. Unplug USB and release the old bezel's hooks through the body's side windows. Work evenly, without prying against engaged hooks.
+2. Attach the Echo Base to the AtomS3R, and insert that stack from the rear of the new bezel's cage. Face the display toward the small opening; point the USB socket toward the top notch.
+3. Orient the keeper with its crossbar at the bottom and its two arms pointing up. Insert it from the rear into the cage's two side slots until seated. It sits behind the Echo Base, not across the front screen. Do not force it. The conservative stack depth still needs an exact assembled-depth check: stop if the board can move backward enough to spoil button travel.
+4. Bring this face/cage/device/keeper assembly straight into the original body's front. Align all four hooks with the existing four side windows and engage gently. Stop if a distorted body needs force.
+5. Confirm the entire active screen is visible, and that pressing/releasing it works without preload. Connect USB at the top. Firmware 2.8 rotates the face by 180 degrees for this orientation.
+6. Press once to mute every sound, and once again to unmute. This setting persists through state changes and power cycles.
+
+The revised latch strength, removal force, button clearance and thermal print behaviour still need a physical bezel test. This is a replacement bezel for the original body, not the abandoned two-part enclosure redesign.
 
 ## Troubleshooting
 
@@ -156,7 +174,7 @@ Dry-fit the unpowered board in the body, align the screen and USB opening, fit t
 - Port busy: close serial monitors or stop another companion instance.
 - Configuration exists: remove `--init-config` and reuse your existing token file.
 - Manual states work but Codex does not: verify absolute hook paths, `/hooks` trust, the running companion and event coverage.
-- Silent device: check long-press mute and the actual board's speaker capability/driver. Site recordings do not stream to the Atom.
+- Silent device: press the screen to check global mute and the actual board's speaker capability/driver. Site recordings do not stream to the Atom.
 - Silent website: click Sound on, raise the volume, and check browser audio settings. Use the Voice style selector and Hear attention sample to compare the five recorded options.
 - Tight print: stop assembly and adjust the fit coupon/clearance for your material before reprinting.
 
@@ -193,7 +211,7 @@ Anime samples stream from their original community soundboard host and need an i
 
 ## Fixed Naruto crew on the M5
 
-Firmware 2.7 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
+Firmware 2.8 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
 
 - Working: quiet slow lo-fi music, looped locally until the state changes or you mute it.
 - Needs input: Hinata — “Naruto-kun!”

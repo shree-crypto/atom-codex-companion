@@ -48,6 +48,7 @@ void setup() {
     M5.begin(config);
     M5.Mic.end(); // Capture is enabled only by the explicit MIC_TEST diagnostic.
     M5.Speaker.begin();
+    M5.Display.setRotation(2); // USB at the top of the V2 enclosure.
     M5.Display.setBrightness(100);
     Serial.begin(115200);
     settings.begin("atom-avatar",false);
@@ -87,7 +88,7 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.7-s3r-lofi-mute\",\"audio\":%s,\"muted\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.8-s3r-usb-top\",\"audio\":%s,\"muted\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
                 M5.Speaker.isEnabled()?"true":"false",presentation.isMuted()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }

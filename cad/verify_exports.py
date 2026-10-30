@@ -5,7 +5,7 @@ from pathlib import Path
 import struct
 import zipfile
 import build123d as bd
-from stationary import PRINT_PARTS,bezel_soft,bezel_trim
+from stationary import PRINT_PARTS,bezel_print
 
 HERE=Path(__file__).resolve().parent
 
@@ -26,7 +26,7 @@ def closed_stl(path):
 
 if __name__=='__main__':
     report={}
-    for function in PRINT_PARTS+(bezel_soft,bezel_trim):
+    for function in PRINT_PARTS+(bezel_print,):
         name=function.__name__
         source=function().shape
         reopened=bd.import_step(str(HERE/'STEP'/(name+'.step')))

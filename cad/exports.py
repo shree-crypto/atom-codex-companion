@@ -1,16 +1,10 @@
+"""Export the replacement bezel only; preserve the user's original body/keeper files."""
 from pathlib import Path
-from stationary import PRINT_PARTS, assembly, exploded, fit_coupons, bezel_soft, bezel_trim
-
-HERE = Path(__file__).resolve().parent
-
-if __name__ == '__main__':
-    for directory in ('STEP', 'STL', '3MF', 'review'):
-        (HERE/directory).mkdir(exist_ok=True)
-    for part in PRINT_PARTS+(bezel_soft,bezel_trim):
-        doc = part()
-        doc.export(str(HERE/'STEP'/(part.__name__+'.step')))
-        doc.export(str(HERE/'STL'/(part.__name__+'.stl')))
-        doc.export(str(HERE/'3MF'/(part.__name__+'.3mf')))
-    assembly()
-    fit_coupons().export(str(HERE/'STL'/'fit_coupons.stl'))
-    exploded()
+from stationary import bezel,bezel_print,assembly,exploded
+HERE=Path(__file__).resolve().parent
+if __name__=='__main__':
+    for directory in ('STEP','STL','3MF','review'):(HERE/directory).mkdir(exist_ok=True)
+    for part in (bezel,bezel_print):
+        doc=part()
+        for kind in ('STEP','STL','3MF'):doc.export(str(HERE/kind/(part.__name__+'.'+kind.lower())))
+    assembly();exploded()

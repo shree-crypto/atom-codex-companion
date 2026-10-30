@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 def render(name, iteration, single=False, accent='green'):
-    meshes=json.loads((HERE/'review'/(name+'-mesh.json')).read_text(encoding='utf-8'))
+    meshes=json.loads((HERE/'review'/(('assembled' if name=='front' else name)+'-mesh.json')).read_text(encoding='utf-8'))
     if not any(m['name']=='body' for m in meshes):
         raise RuntimeError('Stationary V1 mesh export is not ready; refusing old motorized model')
     width=height=1400
@@ -33,7 +33,7 @@ def render(name, iteration, single=False, accent='green'):
         colours=np.clip(colour[None,:]*intensity[:,None]+0.04,0,1)
         triangles_list.append(triangles); colours_list.append(colours)
     triangles=np.concatenate(triangles_list); colours=np.concatenate(colours_list)
-    az,el=np.radians([-58,18])
+    az,el=np.radians([-90,0] if name=='front' else [-58,18])
     toward=np.array([np.cos(el)*np.cos(az),np.cos(el)*np.sin(az),np.sin(el)])
     right=np.array([-np.sin(az),np.cos(az),0]); up=np.cross(toward,right)
     center=(np.asarray(points).min(0)+np.asarray(points).max(0))/2
@@ -62,7 +62,7 @@ def render(name, iteration, single=False, accent='green'):
     def font(size,bold=False):
         path=Path('C:/Windows/Fonts')/('segoeuib.ttf' if bold else 'segoeui.ttf')
         return ImageFont.truetype(str(path),size) if path.exists() else ImageFont.load_default()
-    title={'assembled':'CLASSIC FACE','soft':'SOFTER FACE','slim':'SLIMMER BEZEL','exploded':'SNAPFIT PARTS · EXPLODED'}[name]
+    title={'front':'SCREEN-ONLY OPENING','assembled':'USB-UP CLASSIC FACE','soft':'SOFTER FACE','slim':'SLIMMER BEZEL','exploded':'REPLACE FACE ONLY / REUSE BODY + KEEPER'}[name]
     draw.text((95,70),f'ITERATION {iteration:02d} / {title}',font=font(34,True),fill='#202a31')
     draw.text((95,130),'Single colour' if single else f'Black + {accent} · two separately printable tones',font=font(24),fill='#50616a')
     draw.text((95,1315),'Actual CAD geometry · prototype · physical fit and snap retention unverified',font=font(20),fill='#66737a')
@@ -76,7 +76,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(); parser.add_argument('--iteration',type=int,default=1)
     parser.add_argument('--single',action='store_true')
     parser.add_argument('--accent',choices=('green','orange'),default='green')
-    parser.add_argument('--design',choices=('assembled','exploded','soft','slim','all'),default='assembled')
+    parser.add_argument('--design',choices=('assembled','exploded','front'),default='assembled')
     args=parser.parse_args()
-    names=('assembled','soft','slim') if args.design=='all' else (args.design,)
+    names=(args.design,)
     for name in names: render(name,args.iteration,args.single,args.accent)

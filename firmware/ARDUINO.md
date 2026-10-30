@@ -61,6 +61,6 @@ Serial commands `MIC_TEST` and `STATUS`, each followed by a newline, are also av
 
 ## Enclosure
 
-`cad/stationary.py` now allows for the S3R + base stack. Manufacturer envelopes are 24 × 24 × 12.9 mm and 24 × 24 × 14.14 mm. The summed depth is conservative because actual connector overlap must be measured. The keeper leaves the centre of the speaker face open, with rear grille and side vents. Physical fit, acoustic alignment and snap force remain prototype checks before full printing.
+`cad/stationary.py` is a bezel-only revision: the original body and keeper are reused unchanged. The replacement face has a 24.2 mm pocket, 15.8 mm screen opening and reinforced latches at the existing four body windows. USB exits upward; firmware 2.8 uses display rotation 2 (180 degrees). Test the new bezel for active-pixel clearance, free screen-button travel and gentle latch engagement. Exact assembled stack depth, retention force and print warping remain physical checks.
 
 Hardware sources: [AtomS3R](https://docs.m5stack.com/en/core/AtomS3R), [Atomic Voice/Echo Base](https://docs.m5stack.com/en/atom/Atomic_Voice_Base), [M5Stack Echo Base Arduino example](https://docs.m5stack.com/en/arduino/projects/atomic/atomic_echo_base). Audio licenses and source attribution: [CC0 voice credits](../preview/voices/CREDITS.md).
