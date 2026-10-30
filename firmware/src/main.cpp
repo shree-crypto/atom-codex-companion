@@ -3,10 +3,12 @@
 #include <algorithm>
 #include <cmath>
 #include "presentation.h"
+#include "button_gesture.h"
 
 Receiver receiver;
 Presentation presentation;
 Preferences settings;
+ButtonGesture faceButton;
 char line[513]{};
 size_t used=0;
 bool dropping=false;
@@ -52,7 +54,7 @@ void setup() {
     M5.Display.setBrightness(100);
     Serial.begin(115200);
     settings.begin("atom-avatar",false);
-    presentation.begin(settings.getBool("muted",false));
+    presentation.begin(settings.getBool("muted",false),settings.getUChar("theme",0));
     presentation.setColor(settings.getString("color","orange").c_str());
 }
 
@@ -73,8 +75,8 @@ void loop() {
                 }
                 else if (!strcmp(line,"STATUS")) {
                     State visible=receiver.expired(now)?State::Disconnected:receiver.state();
-                    Serial.printf("{\"v\":1,\"kind\":\"status\",\"state\":\"%s\",\"muted\":%s,\"audio_playing\":%s,\"audio_enabled\":%s,\"buffered\":%s,\"color\":\"%s\",\"frames\":%lu,\"max_frame_us\":%lu}\n",
-                        stateName(visible),presentation.isMuted()?"true":"false",M5.Speaker.isPlaying()?"true":"false",M5.Speaker.isEnabled()?"true":"false",presentation.isBuffered()?"true":"false",presentation.color(),static_cast<unsigned long>(presentation.frameCount()),static_cast<unsigned long>(presentation.maxFrameUs()));
+                    Serial.printf("{\"v\":1,\"kind\":\"status\",\"state\":\"%s\",\"muted\":%s,\"audio_playing\":%s,\"audio_enabled\":%s,\"buffered\":%s,\"color\":\"%s\",\"theme\":\"%s\",\"frames\":%lu,\"max_frame_us\":%lu}\n",
+                        stateName(visible),presentation.isMuted()?"true":"false",M5.Speaker.isPlaying()?"true":"false",M5.Speaker.isEnabled()?"true":"false",presentation.isBuffered()?"true":"false",presentation.color(),presentation.themeName(),static_cast<unsigned long>(presentation.frameCount()),static_cast<unsigned long>(presentation.maxFrameUs()));
                 }
                 else if (receiver.accept(line,now)) presentation.setState(receiver.state(),receiver.cue(),now);
             }
@@ -88,11 +90,15 @@ void loop() {
         presentation.setState(State::Disconnected,false,now);
         if (uint32_t(now-readyAt)>=1000) {
             readyAt=now;
-            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.8-s3r-usb-top\",\"audio\":%s,\"muted\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
+            Serial.printf("{\"v\":1,\"device\":\"atom-companion\",\"kind\":\"ready\",\"firmware\":\"2.9-s3r-pokemon\",\"audio\":%s,\"muted\":%s,\"psram_bytes\":%u,\"board_id\":%u}\n",
                 M5.Speaker.isEnabled()?"true":"false",presentation.isMuted()?"true":"false",unsigned(ESP.getPsramSize()),unsigned(M5.getBoard()));
         }
     }
-    if (M5.BtnA.wasPressed()) {
+    const auto action=faceButton.update(M5.BtnA.wasPressed(),M5.BtnA.isPressed(),M5.BtnA.wasReleased(),now);
+    if(action==ButtonAction::NextTheme){
+        presentation.nextTheme();settings.putUChar("theme",presentation.theme());
+        Serial.printf("{\"v\":1,\"kind\":\"theme\",\"theme\":\"%s\"}\n",presentation.themeName());
+    }else if(action==ButtonAction::ToggleMute){
         presentation.mute(!presentation.isMuted());
         settings.putBool("muted",presentation.isMuted());
         Serial.printf("{\"v\":1,\"kind\":\"mute\",\"muted\":%s}\n",presentation.isMuted()?"true":"false");

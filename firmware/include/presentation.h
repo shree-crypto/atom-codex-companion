@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <M5Unified.h>
 #include "protocol.h"
+#include "pokemon_faces.h"
 
 class Presentation {
     M5Canvas canvas{&M5.Display};
@@ -11,6 +12,7 @@ class Presentation {
     uint32_t frames=0, longestFrame=0;
     State current=State::Disconnected;
     bool muted=false;
+    uint8_t themeIndex=0;
     uint32_t entered=0, rendered=0, repeatAt=0;
     uint8_t repeats=0;
     bool waitingForVoice=false;
@@ -18,7 +20,10 @@ class Presentation {
     void sound(uint32_t now);
     void ambient();
 public:
-    void begin(bool soundMuted);
+    void begin(bool soundMuted,uint8_t theme=0);
+    void nextTheme(){themeIndex=(themeIndex+1)%FaceThemeCount;}
+    uint8_t theme()const{return themeIndex;}
+    const char* themeName()const{return FaceThemeNames[themeIndex];}
     void setState(State state, bool notify, uint32_t now);
     void tick(uint32_t now);
     void mute(bool value);

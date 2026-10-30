@@ -137,3 +137,10 @@ To rebuild the prepared voice clips from their source ZIPs, use `python checks/p
 ## Pokemon face studies
 
 The public preview includes Pikachu, Charmander, Squirtle, Bulbasaur, Eevee, Psyduck, Jigglypuff and Snorlax themes, plus the original robot. Select a character, then try the existing states and sound controls. These are fan-made vector studies from user-supplied references; no wallpaper images are bundled. They are browser previews, not firmware themes: the connected M5 retains firmware 2.8 and its current sounds.
+
+
+## Screen button and Pokemon faces (firmware 2.9)
+
+Tap and release to toggle saved global mute. Hold the screen button for one second to select the next face; keep holding and it changes only once. Release before the next hold. A hold does not toggle mute or restart the current audio. Both mute and face selection survive power cycles. The side reset button retains its reset/download function.
+
+Order: original robot, Pikachu, Charmander, Squirtle, Bulbasaur, Eevee, Psyduck, Jigglypuff, Snorlax, then back to the robot. Faces still follow automatic Codex states. The browser selector is independent of the physical device. Native M5 graphics approximate the browser vector studies at 128 x 128 pixels.

@@ -111,7 +111,7 @@ In a second terminal, in the same folder, run these one at a time. On macOS repl
 .venv\Scripts\python.exe -m companion.main --emit finished
 ```
 
-Check the display and speaker. Each screen-button press toggles global mute, saved across states and power cycles. Holding the button toggles once. Muting stops every sound; unmuting resumes the current sound. This never approves a Codex operation. These manual events verify the connection, not automatic Codex integration.
+Check the display and speaker. A short press and release toggles global mute, saved across states and power cycles. A one-second hold changes faces once instead. Muting stops every sound; unmuting resumes the current sound. This never approves a Codex operation. These manual events verify the connection, not automatic Codex integration.
 
 ## 8. Connect Codex automatically
 
@@ -236,3 +236,10 @@ To regenerate the original lo-fi working loop before rebuilding its embedded hea
 python expressions/generate_working_lofi.py
 python expressions/generate_device_audio.py
 ```
+
+
+## Screen button and Pokemon faces (firmware 2.9)
+
+Tap and release to toggle saved global mute. Hold the screen button for one second to select the next face; keep holding and it changes only once. Release before the next hold. A hold does not toggle mute or restart the current audio. Both mute and face selection survive power cycles. The side reset button retains its reset/download function.
+
+Order: original robot, Pikachu, Charmander, Squirtle, Bulbasaur, Eevee, Psyduck, Jigglypuff, Snorlax, then back to the robot. Faces still follow automatic Codex states. The browser selector is independent of the physical device. Native M5 graphics approximate the browser vector studies at 128 x 128 pixels.

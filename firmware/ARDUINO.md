@@ -64,3 +64,10 @@ Serial commands `MIC_TEST` and `STATUS`, each followed by a newline, are also av
 `cad/stationary.py` is a bezel-only revision: the original body and keeper are reused unchanged. The replacement face has a 24.2 mm pocket, 15.8 mm screen opening and reinforced latches at the existing four body windows. USB exits upward; firmware 2.8 uses display rotation 2 (180 degrees). Test the new bezel for active-pixel clearance, free screen-button travel and gentle latch engagement. Exact assembled stack depth, retention force and print warping remain physical checks.
 
 Hardware sources: [AtomS3R](https://docs.m5stack.com/en/core/AtomS3R), [Atomic Voice/Echo Base](https://docs.m5stack.com/en/atom/Atomic_Voice_Base), [M5Stack Echo Base Arduino example](https://docs.m5stack.com/en/arduino/projects/atomic/atomic_echo_base). Audio licenses and source attribution: [CC0 voice credits](../preview/voices/CREDITS.md).
+
+
+## Screen button and Pokemon faces (firmware 2.9)
+
+Tap and release to toggle saved global mute. Hold the screen button for one second to select the next face; keep holding and it changes only once. Release before the next hold. A hold does not toggle mute or restart the current audio. Both mute and face selection survive power cycles. The side reset button retains its reset/download function.
+
+Order: original robot, Pikachu, Charmander, Squirtle, Bulbasaur, Eevee, Psyduck, Jigglypuff, Snorlax, then back to the robot. Faces still follow automatic Codex states. The browser selector is independent of the physical device. Native M5 graphics approximate the browser vector studies at 128 x 128 pixels.

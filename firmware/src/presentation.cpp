@@ -4,7 +4,8 @@
 #include "presentation.h"
 #include "voice_assets.h"
 
-void Presentation::begin(bool soundMuted) {
+void Presentation::begin(bool soundMuted,uint8_t theme) {
+    themeIndex=theme<FaceThemeCount?theme:0;
     muted=soundMuted;
     canvas.setColorDepth(16);
     canvas.setPsram(false);
@@ -75,6 +76,8 @@ void Presentation::sound(uint32_t now) {
 void Presentation::render(uint32_t now) {
     const uint32_t began=micros();
     lgfx::LGFXBase& display=buffered?static_cast<lgfx::LGFXBase&>(canvas):static_cast<lgfx::LGFXBase&>(M5.Display);
+    if(themeIndex>0){drawPokemonFace(display,themeIndex,current,now-entered,muted);}
+    else {
     const uint16_t bg=display.color565(12,23,29), eye=eyeColor;
     display.startWrite(); display.fillScreen(bg);
     const uint32_t age=now-entered;
@@ -128,6 +131,7 @@ void Presentation::render(uint32_t now) {
     display.setTextSize(1);
     if (muted) display.drawString("M",115,115);
     display.endWrite();
+    }
     if (buffered) canvas.pushSprite(0,0);
     ++frames;
     longestFrame=std::max(longestFrame,uint32_t(micros()-began));
