@@ -1,3 +1,4 @@
+import {pokemonThemes,pokemonSvg,renderPokemon} from './pokemon.mjs';
 import {Animator,sample,svg,definitions} from './face.mjs';
 import {SoundPreview,voicePlan,voiceStyles,voiceOptions} from './audio.mjs';
 const $=id=>document.getElementById(id);
@@ -29,6 +30,7 @@ $('phrase').addEventListener('change',async()=>{
 $('next-phrase').addEventListener('click',async()=>{
   try{await sound.enable();sound.variation=null;$('phrase').value='auto';sound.play(face.id,{once:true});syncSound();}catch(error){$('audio-status').textContent=error.message;}
 });
+let theme='pikachu';
 let now=0,previous=performance.now(),paused=false,demo=false,demoIndex=0,demoAt=0;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');$('reduced').checked=reduced.matches;
 const activeStates=definitions.states.filter(state=>state.id!=='message');
@@ -46,7 +48,8 @@ function syncSound(){
 }
 function draw(){
   const f=face.frame(now,{reduced:$('reduced').checked});
-  $('face').innerHTML=svg(f,{muted:!sound.enabled,color:$('eye-color').value});
+  if(theme==='robot'){$('face').dataset.pokemon='';$('face').innerHTML=svg(f,{muted:!sound.enabled,color:$('eye-color').value});}
+  else renderPokemon($('face'),theme,face.id,now,{muted:!sound.enabled,reduced:$('reduced').checked});
   $('face').setAttribute('aria-label',states.get(face.id).label+' expression');
 }
 function choose(id,play=true){
@@ -79,6 +82,20 @@ $('eye-color').addEventListener('change',()=>{
   for(const button of $('states').children)button.querySelector('.mini').innerHTML=svg(sample(button.dataset.id,0,{reduced:true}),{color:$('eye-color').value});
   draw();
 });
+function selectTheme(id){
+ theme=id;$('face-theme').value=id;$('eye-color').disabled=id!=='robot';
+ for(const b of $('pokemon-gallery').children)b.setAttribute('aria-pressed',String(b.dataset.theme===id));
+ for(const b of $('states').children)b.querySelector('.mini').innerHTML=id==='robot'?svg(sample(b.dataset.id,0,{reduced:true}),{color:$('eye-color').value}):pokemonSvg(id,b.dataset.id);
+ draw();
+}
+$('face-theme').append(new Option('Original robot','robot'),...pokemonThemes.map(t=>new Option(t.name,t.id)));
+$('face-theme').addEventListener('change',e=>selectTheme(e.target.value));
+for(const t of pokemonThemes){
+ const b=document.createElement('button');b.className='pokemon-card';b.dataset.theme=t.id;b.setAttribute('aria-pressed','false');
+ const art=document.createElement('span');art.innerHTML=pokemonSvg(t.id);art.setAttribute('aria-hidden','true');
+ const name=document.createElement('span');name.textContent=t.name;b.append(art,name);b.addEventListener('click',()=>selectTheme(t.id));$('pokemon-gallery').append(b);
+}
+selectTheme(theme);
 $('reduced').addEventListener('change',draw);
 reduced.addEventListener('change',event=>{$('reduced').checked=event.matches;draw();});
 $('demo').addEventListener('click',async()=>{

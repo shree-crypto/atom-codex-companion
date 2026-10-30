@@ -62,14 +62,14 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for name in ('revision-2-front.png','revision-2-assembled.png','revision-2-exploded.png'):
         shutil.copyfile(ROOT/'assets'/name,DIST/name)
-    for name in ['index.html', 'style.css', 'app.mjs', 'audio.mjs', 'anime.mjs', 'device-voices.mjs', 'face.mjs', 'definitions.mjs']:
+    for name in ['index.html', 'style.css', 'pokemon-faces.svg', 'app.mjs', 'pokemon.mjs', 'audio.mjs', 'anime.mjs', 'device-voices.mjs', 'face.mjs', 'definitions.mjs']:
         shutil.copyfile(ROOT / 'preview' / name, DIST / name)
     shutil.copytree(ROOT / 'preview/voices', DIST / 'voices', dirs_exist_ok=True)
     patterns = ['README.md', 'GETTING_STARTED.md', 'requirements*.txt',
                 'companion/*.py', 'hooks/*.py', 'hooks/config.example.json',
                 'assets/*.png', 'firmware/*.md', 'firmware/platformio.ini', 'firmware/src/*.cpp', 'firmware/include/*.h',
                 'firmware/test/test_limits/*.cpp', 'expressions/*.py', 'expressions/definitions.json', 'expressions/device_voice_pack.json',
-                'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'preview/voices/*.md', 'preview/voices/*.txt', 'preview/voices/*.json',
+                'preview/*.svg', 'preview/*.mjs', 'preview/*.html', 'preview/*.css', 'preview/voices/*.md', 'preview/voices/*.txt', 'preview/voices/*.json',
                 'preview/voices/*/*.wav', 'preview/voices/*/*.ogg', 'tests/*.py', 'tests/*.mjs',
                 'checks/*.py', 'checks/ACCEPTANCE.md', 'checks/event-coverage.md', 'checks/CODEX_AVATAR_BACKEND.md', 'checks/HARDWARE_S3R_ECHO.md', 'checks/hardware-s3r-echo.json',
                 'cad/*.py', 'cad/dimensions.json']

@@ -133,3 +133,7 @@ Text-to-CAD's native image backend failed OCCT pixel readback on this Windows se
 Current hardware results are in [checks/HARDWARE_S3R_ECHO.md](checks/HARDWARE_S3R_ECHO.md); earlier baseline results remain in [checks/ACCEPTANCE.md](checks/ACCEPTANCE.md). Close any serial monitor before upload or starting the companion; only one process can own the port. Stop the observer with Ctrl+C. Disconnect shows a disconnected face after five seconds. Reconnect resends current state without repeating old attention sounds.
 
 To rebuild the prepared voice clips from their source ZIPs, use `python checks/prepare_voice_assets.py --archives PATH`; NumPy is required for that optional conversion. Sources and filenames are documented in the audio credits. Playback itself needs no NumPy or speech service.
+
+## Pokemon face studies
+
+The public preview includes Pikachu, Charmander, Squirtle, Bulbasaur, Eevee, Psyduck, Jigglypuff and Snorlax themes, plus the original robot. Select a character, then try the existing states and sound controls. These are fan-made vector studies from user-supplied references; no wallpaper images are bundled. They are browser previews, not firmware themes: the connected M5 retains firmware 2.8 and its current sounds.
