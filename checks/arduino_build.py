@@ -18,8 +18,12 @@ sketch.mkdir(parents=True, exist_ok=True)
 for folder in ('src', 'include'):
     for source in (ROOT / 'firmware' / folder).iterdir():
         if source.suffix in ('.cpp', '.h'):
-            shutil.copyfile(source, sketch / source.name)
-(sketch / 'AtomCompanion.ino').write_text('// setup() and loop() are in canonical main.cpp.\n#include <Arduino.h>\n', encoding='utf-8')
+            target=sketch / source.name
+            if not target.exists() or source.read_bytes()!=target.read_bytes():
+                shutil.copyfile(source,target)
+stub='// setup() and loop() are in canonical main.cpp.\n#include <Arduino.h>\n'
+if not (sketch/'AtomCompanion.ino').exists() or (sketch/'AtomCompanion.ino').read_text(encoding='utf-8')!=stub:
+    (sketch/'AtomCompanion.ino').write_text(stub,encoding='utf-8')
 fqbn = 'm5stack:esp32:m5stack_atoms3r'
 out = ROOT / 'outputs/atoms3r-echo'
 out.mkdir(parents=True, exist_ok=True)

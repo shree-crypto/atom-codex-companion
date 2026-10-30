@@ -171,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     watcher = RolloutWatcher(args.codex_home/'sessions', thread=args.thread) if args.codex_events else None
     evidence = server.evidence
     server.health = lambda: dict(pid=os.getpid(), state=reducer.snapshot.state, seq=reducer.snapshot.seq,
-        device_connected=bool(link and link.ready), port=args.port,
+        device_connected=bool(link and link.ready), firmware=link.firmware if link else None, port=args.port,
         source='codex_rollouts' if watcher else 'hooks',
         events_seen=watcher.events if watcher else server.counter,
         recent_events=list(evidence))

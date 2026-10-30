@@ -6,7 +6,7 @@ An M5 Atom desk avatar for Codex activity, with animated eyes, speaker cues and 
 
 ![Classic orange enclosure rendered from actual CAD](assets/iteration-06-assembled-orange.png)
 
-The current target is AtomS3R C126 with the Atomic Echo Base A149. Firmware 2.4 combines smooth 60 fps expressions, quiet 66 BPM lo-fi music during Working, and fixed Hinata/Kakashi/Naruto/Killer Bee alerts. The browser's M5 fixed set auditions the same local audio files.
+The current target is AtomS3R C126 with the Atomic Echo Base A149. Firmware 2.6 combines smooth 60 fps expressions, quiet 66 BPM lo-fi music during Working, and fixed Hinata/Kakashi/Naruto/Killer Bee alerts. The browser's M5 fixed set auditions the same local audio files.
 
 The included Windows installer connects all local Codex chats automatically, starts the USB companion at sign-in and preserves existing hooks. Five native Codex hooks cover task/activity/input/completion notifications; a read-only local lifecycle adapter supplies new-message and structured question/answer events. See [automatic setup](GETTING_STARTED.md#8-connect-codex-automatically), [event coverage](checks/event-coverage.md) and the [desktop pet backend findings](checks/CODEX_AVATAR_BACKEND.md).
 
@@ -31,7 +31,7 @@ Open http://localhost:8000 and click **Sound on**. To include local download lin
 
 The preview plays bundled CC0 recordings from cicifyre and Kenney. Character styles use vocal reactions, while the announcer uses ready-made words. Bright/anime-like is a pitch variation, not a recording from an anime. See [audio credits](preview/voices/CREDITS.md). Installing Python packages, the pinned firmware toolchain and CAD dependencies requires network access. Runtime observer traffic uses laptop loopback and USB. Credentials and local runtime configuration are excluded from this repository. No reuse license has been selected.
 
-Start with [GETTING_STARTED.md](GETTING_STARTED.md) for the complete Windows/macOS setup sequence. The browser preview uses recorded voices and revised animations; the S3R firmware embeds the default Cute recordings.
+Start with [GETTING_STARTED.md](GETTING_STARTED.md) for the complete Windows/macOS setup sequence. The browser preview uses recorded voices and revised animations; the S3R firmware embeds slow lo-fi working music and the four fixed Naruto-series alert cues.
 
 A small physical Codex avatar with eight expressions, quiet attention sounds and a pressable face. V1 has **no motors or motor control**. Motion is reserved for V2.
 
@@ -44,7 +44,7 @@ The user's colour-screen M5 Atom and reported built-in speaker are the intended 
 - Local Python observer with authenticated loopback ingress and explicit USB port selection.
 - Per-session state priority, request acknowledgement, stale-turn filtering, bounded framing and reconnect without replaying cues.
 - Eight faces: idle, working, needs input, new message, finished turn, error, interrupted and disconnected.
-- Device speaker cues use embedded CC0 Cute recordings. Input/error reactions repeat while active; message/completion repeat three times. Acknowledgement, mute, state changes and disconnection stop playback. The microphone runs only for an explicit local level diagnostic.
+- Working uses a locally generated lo-fi loop; alert states use the selected Naruto-series dialogue clips. Input/error reactions repeat while active; message/completion repeat three times. Acknowledgement, mute, state changes and disconnection stop playback. The microphone runs only for an explicit local level diagnostic.
 - Short face press acknowledges the displayed alert; it **never approves a Codex operation**. Long press toggles sound mute, saved on the device.
 - Nominal stationary enclosure, fit coupons, assembly and exploded views. Maximum two printed colours; all parts can also use one colour.
 

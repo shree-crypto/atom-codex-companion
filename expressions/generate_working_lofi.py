@@ -34,13 +34,13 @@ for bar,(notes,bass) in enumerate(chords):
         add(bar*4+step*.5+(.06 if step%2 else 0),hat,.004)
 for beat,note in [(1.5,75),(3.25,74),(6.5,72),(9.5,70),(11.25,72),(14.5,69)]:add(beat,keys(note,1.4),.025)
 mix+=.08*np.roll(mix,round(.18*RATE))+.035*np.roll(mix,round(.36*RATE))
-mix=np.tanh(mix*1.1);mix-=mix.mean();mix*=.035/np.sqrt(np.mean(mix*mix))
+mix=np.tanh(mix*1.1);mix-=mix.mean();mix*=(.035*10**(12/20))/np.sqrt(np.mean(mix*mix))
 assert np.max(np.abs(mix))<.9
 path=ROOT/'preview/voices/naruto-device/working.wav'
 with wave.open(str(path),'wb') as stream:
     stream.setparams((1,2,RATE,0,'NONE','not compressed'));stream.writeframes(np.round(mix*32767).astype('<i2').tobytes())
 manifest=ROOT/'expressions/device_voice_pack.json';pack=json.loads(manifest.read_text(encoding='utf-8'))
 pack['name']='Naruto alerts + slow lo-fi working music'
-pack['states']['working']=dict(character='Ambient',phrase='Slow lo-fi — 66 BPM',src=None,source=None,duration=round(N/RATE,3),file='naruto-device/working.wav',sha256=hashlib.sha256(path.read_bytes()).hexdigest(),loop=True,generated='Original 66 BPM instrumental; soft electric keys, bass and brushed drums; quiet RMS -29 dBFS; seamless four-bar loop')
+pack['states']['working']=dict(character='Ambient',phrase='Slow lo-fi — 66 BPM',src=None,source=None,duration=round(N/RATE,3),file='naruto-device/working.wav',sha256=hashlib.sha256(path.read_bytes()).hexdigest(),loop=True,generated='Original 66 BPM instrumental; soft electric keys, bass and brushed drums; quiet RMS -17.1 dBFS (+12 dB from the original working loop); seamless four-bar loop')
 manifest.write_text(json.dumps(pack,indent=2)+'\n',encoding='utf-8')
 print('Generated original 66-BPM lo-fi loop:',round(N/RATE,3),'seconds')

@@ -27,7 +27,7 @@ link=serial.Serial(port=None,baudrate=115200,timeout=.2)
 link.dtr=False;link.rts=False;link.port=args.port
 with link:
     ready=read_kind(link,'ready')
-    assert ready.get('device')=='atom-companion' and ready.get('firmware')=='2.4-s3r-lofi',ready
+    assert ready.get('device')=='atom-companion' and ready.get('firmware')=='2.6-s3r-lofi',ready
     assert ready.get('audio') is True, 'Echo Base speaker did not initialize'
     assert ready.get('psram_bytes',0)>=8*1024*1024, 'S3R PSRAM profile did not initialize'
     result['ready']=ready

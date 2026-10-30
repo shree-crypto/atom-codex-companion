@@ -73,6 +73,7 @@ class SerialLink:
         self.wire = None
         self.decoder = FrameDecoder()
         self.ready = False
+        self.firmware = None
         self.retry_at = 0.0
         self.opened_at = 0.0
         self.sent_at = -1.0
@@ -91,6 +92,7 @@ class SerialLink:
                 pass
         self.wire = None
         self.ready = False
+        self.firmware = None
         self.first_send = True
         self.last_snapshot = None
         self.decoder = FrameDecoder()
@@ -109,6 +111,8 @@ class SerialLink:
             for frame in self.decoder.feed(self.wire.read(min(self.wire.in_waiting, 4096))):
                 if frame.get('kind') == 'ready':
                     self.ready = True
+                    version=frame.get('firmware')
+                    self.firmware=version if isinstance(version,str) and len(version)<=64 else None
                 elif self.ready and frame.get('kind') == 'ack':
                     if frame['epoch'] == self.epoch and frame['seq'] == snapshot.seq:
                         self.acknowledge()

@@ -166,7 +166,7 @@ Edit `expressions/definitions.json`, then run `python expressions/generate.py` t
 
 Python checks: `python -m unittest discover -s tests -v`. Browser logic checks require Node: `node --test tests/face.test.mjs tests/audio.test.mjs`. CAD uses Text-to-CAD/Cadgen 0.8.1 and `cad/stationary.py`; see README for regeneration. Earlier motor headers and tests are retained source studies only; V1 has no motor control.
 
-Recorded voice assets are bundled under `preview/voices/` and in the source download. Choose Cute, Bright/anime-like, Warm, Mature or Spoken announcer. Character styles are short vocal reactions rather than full notification sentences. Credits and CC0 source links are in `preview/voices/CREDITS.md`. The voice ZIP on the site includes the selected recordings and credit files.
+Recorded voice assets are bundled under `preview/voices/` and in the source download. Choose the M5 fixed set for the current lo-fi/character mapping, or audition Cute, Bright/anime-like, Warm, Mature or Spoken announcer. Character styles are short vocal reactions rather than full notification sentences. Credits and CC0 source links are in `preview/voices/CREDITS.md`. The voice ZIP on the site includes the selected recordings and credit files.
 
 ## Eye colours and smooth animation
 
@@ -193,7 +193,7 @@ Anime samples stream from their original community soundboard host and need an i
 
 ## Fixed Naruto crew on the M5
 
-Firmware 2.4 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
+Firmware 2.6 uses continuous quiet slow lo-fi music while working and a fixed dialogue clip for each alert state:
 
 - Working: quiet slow lo-fi music, looped locally until the state changes or you mute it.
 - Needs input: Hinata — “Naruto-kun!”

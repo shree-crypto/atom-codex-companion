@@ -9,9 +9,9 @@
       "source": null,
       "duration": 14.545,
       "file": "naruto-device/working.wav",
-      "sha256": "9e7ab26cc0abf6b26b955ec94fb282d3febbc21693eac08369957db956a23e8b",
+      "sha256": "3c0f1a0d1ad2dc94a8db7e12340bf1a3d61dafb057f287e84a348da4dda9d052",
       "loop": true,
-      "generated": "Original 66 BPM instrumental; soft electric keys, bass and brushed drums; quiet RMS -29 dBFS; seamless four-bar loop"
+      "generated": "Original 66 BPM instrumental; soft electric keys, bass and brushed drums; quiet RMS -17.1 dBFS (+12 dB from the original working loop); seamless four-bar loop"
     },
     "needs_input": {
       "character": "Hinata",
